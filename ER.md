@@ -51,7 +51,7 @@ erDiagram
     INVITATIONS {
         uuid id PK
         uuid group_id FK
-        string code
+        string token_hash
         datetime expires_at
         datetime created_at
     }
@@ -88,7 +88,7 @@ erDiagram
         uuid id PK
         uuid group_id FK
         uuid user_id FK
-        string role
+        string role FK
         datetime joined_at
     }
 
@@ -126,6 +126,11 @@ erDiagram
         datetime created_at
     }
 
+    ROLES {
+        uuid role_id PK
+        string role_name
+    }
+
     USERS ||--o{ GROUP_MEMBERS : joins
     GROUPS ||--o{ GROUP_MEMBERS : has
     GROUPS ||--o{ SPACES : contains
@@ -134,5 +139,6 @@ erDiagram
     CATEGORIES ||--o{ ITEMS : classifies
     USERS ||--o{ ITEMS : creates
     GROUPS ||--o{ INVITATIONS : issues
+    GROUP_MEMBERS ||--|{ ROLES : issues
 
 ```
