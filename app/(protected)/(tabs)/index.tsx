@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useSupabase } from "@/hooks/useSupabase";
 
+import { useUser } from "@/hooks/useUser";
+
 export default function Page() {
 	const { signOut } = useSupabase();
 	const insets = useSafeAreaInsets();
@@ -26,7 +28,7 @@ export default function Page() {
 				paddingBottom: insets.bottom,
 			}}
 		>
-			<Button title="Sign Out" onPress={handleSignOut} />
+			<Button title="SignOut" onPress={handleSignOut} />
 		</View>
 	);
 }

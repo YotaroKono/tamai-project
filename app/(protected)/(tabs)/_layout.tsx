@@ -1,12 +1,60 @@
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Tabs } from "expo-router";
+import { useTheme } from "react-native-paper";
 
-export default function TabsLayout() {
+export default function TabLayout() {
+	const theme = useTheme();
+
 	return (
-		<NativeTabs>
-			<NativeTabs.Trigger name="index">
-				<Label>Home</Label>
-				<Icon sf="house.fill" drawable="custom_android_drawable" />
-			</NativeTabs.Trigger>
-		</NativeTabs>
+		<Tabs
+			screenOptions={{
+				tabBarActiveTintColor: theme.colors.primary,
+				tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+				tabBarStyle: {
+					backgroundColor: theme.colors.surface,
+				},
+				headerShown: false,
+			}}
+		>
+			<Tabs.Screen
+				name="shopping/index"
+				options={{
+					title: "買い物",
+					tabBarIcon: ({ color, focused }) => (
+						<MaterialCommunityIcons
+							name={focused ? "cart" : "cart-outline"}
+							size={24}
+							color={color}
+						/>
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="family/index"
+				options={{
+					title: "ファミリー",
+					tabBarIcon: ({ color, focused }) => (
+						<MaterialCommunityIcons
+							name={focused ? "account-group" : "account-group-outline"}
+							size={24}
+							color={color}
+						/>
+					),
+				}}
+			/>
+			{/* 以下のスクリーンはタブに表示しない */}
+			<Tabs.Screen
+				name="index"
+				options={{
+					href: null,
+				}}
+			/>
+			<Tabs.Screen
+				name="profile"
+				options={{
+					href: null,
+				}}
+			/>
+		</Tabs>
 	);
 }
