@@ -16,14 +16,29 @@ export default function RootLayout() {
 	);
 }
 
+// 開発モード: true にすると認証をスキップして protected 画面に直接アクセス可能
+const DEV_SKIP_AUTH = true;
+
+SplashScreen.setOptions({
+	duration: 500,
+	fade: true,
+});
+
 function RootNavigator() {
 	const { isLoaded, session } = useSupabase();
+
+	// 1. ここで認証状態を確定させる
+	// DEV_SKIP_AUTH が true なら、session がなくても認証済みとして扱う
+	const isAuthenticated = DEV_SKIP_AUTH || !!session;
 
 	useEffect(() => {
 		if (isLoaded) {
 			SplashScreen.hide();
 		}
 	}, [isLoaded]);
+
+	// まだ読み込み中の場合は何も返さない（またはロード画面）
+	if (!isLoaded) return null;
 
 	return (
 		<PaperProvider theme={paperTheme}>
