@@ -1,6 +1,13 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { View } from "react-native";
+import {
+	Button,
+	HelperText,
+	SegmentedButtons,
+	Text,
+	TextInput,
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { commonStyles } from "@/theme/paperTheme";
@@ -61,94 +68,69 @@ export default function GroupRegisterScreen() {
 				</View>
 
 				{/* Tab Navigation */}
-				<View style={commonStyles.tabContainer}>
-					<Pressable
-						style={[
-							commonStyles.tab,
-							activeTab === "create" && commonStyles.tabActive,
-						]}
-						onPress={() => {
-							setActiveTab("create");
+				<View style={commonStyles.section}>
+					<SegmentedButtons
+						value={activeTab}
+						onValueChange={(value) => {
+							setActiveTab(value as "create" | "join");
 							setError("");
 						}}
-					>
-						<Text
-							style={[
-								commonStyles.tabText,
-								activeTab === "create" && commonStyles.tabTextActive,
-							]}
-						>
-							作成する
-						</Text>
-					</Pressable>
-					<Pressable
-						style={[
-							commonStyles.tab,
-							activeTab === "join" && commonStyles.tabActive,
+						buttons={[
+							{ value: "create", label: "作成する" },
+							{ value: "join", label: "参加する" },
 						]}
-						onPress={() => {
-							setActiveTab("join");
-							setError("");
-						}}
-					>
-						<Text
-							style={[
-								commonStyles.tabText,
-								activeTab === "join" && commonStyles.tabTextActive,
-							]}
-						>
-							参加する
-						</Text>
-					</Pressable>
+					/>
 				</View>
 
 				{/* Form Content */}
 				<View style={commonStyles.formContainer}>
 					{activeTab === "create" ? (
 						<>
-							<Text style={commonStyles.label}>ファミリー名</Text>
 							<TextInput
-								style={commonStyles.input}
+								label="ファミリー名"
+								mode="outlined"
 								value={familyName}
 								onChangeText={(text) => {
 									setFamilyName(text);
 									setError("");
 								}}
-								placeholder=""
+								error={!!error}
 							/>
-							{error && <Text style={commonStyles.errorText}>{error}</Text>}
+							<HelperText type="error" visible={!!error}>
+								{error}
+							</HelperText>
 
-							<Pressable
-								style={commonStyles.submitButton}
+							<Button
+								mode="contained"
 								onPress={handleCreateGroup}
+								contentStyle={commonStyles.buttonContentLarge}
 							>
-								<Text style={commonStyles.submitButtonText}>
-									スペースを作成
-								</Text>
-							</Pressable>
+								スペースを作成
+							</Button>
 						</>
 					) : (
 						<>
-							<Text style={commonStyles.label}>招待リンク</Text>
 							<TextInput
-								style={commonStyles.input}
+								label="招待リンク"
+								mode="outlined"
 								value={invitationLink}
 								onChangeText={(text) => {
 									setInvitationLink(text);
 									setError("");
 								}}
-								placeholder=""
+								error={!!error}
 							/>
-							{error && <Text style={commonStyles.errorText}>{error}</Text>}
+							<HelperText type="error" visible={!!error}>
+								{error}
+							</HelperText>
 
-							<Pressable
-								style={commonStyles.submitButton}
+							<Button
+								mode="contained"
 								onPress={handleJoinGroup}
+								contentStyle={commonStyles.buttonContentLarge}
 							>
-								<Text style={commonStyles.submitButtonText}>
-									スペースに参加する
-								</Text>
-							</Pressable>
+								スペースに参加する
+							</Button>
 						</>
 					)}
 				</View>
