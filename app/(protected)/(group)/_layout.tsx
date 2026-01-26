@@ -6,7 +6,9 @@ export default function GroupLayout() {
 			screenOptions={{
 				headerShown: false,
 			}}
+			initialRouteName="index"
 		>
+			<Stack.Screen name="index" />
 			<Stack.Screen name="register" />
 			<Stack.Screen name="created" />
 		</Stack>

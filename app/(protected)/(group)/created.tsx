@@ -1,9 +1,10 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, Text, TextInput, View } from "react-native";
+import { Alert, View } from "react-native";
+import { Button, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "./created.styles";
+import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupCreatedScreen() {
 	const [invitationLink] = useState("https://example.com");
@@ -18,52 +19,59 @@ export default function GroupCreatedScreen() {
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
-			{/* Logo */}
-			<View style={styles.logoContainer}>
-				<View style={styles.logo}>
-					<Text style={styles.logoText}>S</Text>
+		<SafeAreaView style={commonStyles.screenContainer}>
+			<View style={commonStyles.contentLarge}>
+				{/* Logo */}
+				<View style={commonStyles.logoContainer}>
+					<View style={commonStyles.logo}>
+						<Text style={commonStyles.logoText}>S</Text>
+					</View>
 				</View>
-			</View>
 
-			{/* Success Icon */}
-			<View style={styles.successContainer}>
-				<View style={styles.checkmarkCircle}>
-					<Text style={styles.checkmark}>✓</Text>
+				{/* Success Icon */}
+				<View style={commonStyles.sectionCentered}>
+					<View style={commonStyles.iconCircleLarge}>
+						<Text style={commonStyles.iconText}>✓</Text>
+					</View>
 				</View>
-			</View>
 
-			{/* Success Message */}
-			<View style={styles.messageContainer}>
-				<Text style={styles.successTitle}>「佐藤家」を作成しました！</Text>
-				<Text style={styles.successDescription}>
-					まずは、招待リンクをコピーして、LINEなどで{"\n"}
-					メンバーに共有しましょう。
-				</Text>
-			</View>
-
-			{/* Invitation Link */}
-			<View style={styles.linkContainer}>
-				<View style={styles.linkInputContainer}>
-					<TextInput
-						style={styles.linkInput}
-						value={invitationLink}
-						editable={false}
-					/>
-					<Pressable style={styles.copyButton} onPress={handleCopyLink}>
-						<Text style={styles.copyButtonText}>コピー</Text>
-					</Pressable>
+				{/* Success Message */}
+				<View style={commonStyles.sectionCenteredPadded}>
+					<Text variant="headlineSmall" style={commonStyles.titleCenter}>
+						「佐藤家」を作成しました！
+					</Text>
+					<Text variant="bodyMedium" style={commonStyles.textCenter}>
+						まずは、招待リンクをコピーして、LINEなどで{"\n"}
+						メンバーに共有しましょう。
+					</Text>
 				</View>
-			</View>
 
-			{/* Navigate Button */}
-			<View style={styles.buttonContainer}>
-				<Pressable
-					style={styles.navigateButton}
-					onPress={handleNavigateToSpace}
-				>
-					<Text style={styles.navigateButtonText}>スペースに進む</Text>
-				</Pressable>
+				{/* Invitation Link */}
+				<View style={commonStyles.section}>
+					<View style={commonStyles.row}>
+						<TextInput
+							style={commonStyles.inputFlex}
+							value={invitationLink}
+							editable={false}
+							mode="outlined"
+							dense
+						/>
+						<Button mode="contained" onPress={handleCopyLink}>
+							コピー
+						</Button>
+					</View>
+				</View>
+
+				{/* Navigate Button */}
+				<View style={commonStyles.bottomButtonContainer}>
+					<Button
+						mode="contained"
+						onPress={handleNavigateToSpace}
+						contentStyle={commonStyles.buttonContentLarge}
+					>
+						スペースに進む
+					</Button>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
