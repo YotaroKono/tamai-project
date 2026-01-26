@@ -1,21 +1,26 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import { Alert, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { Share, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupCreatedScreen() {
-	const [invitationLink] = useState("https://example.com");
+	const { groupName, invitationLink } = useLocalSearchParams<{
+		groupName: string;
+		invitationLink: string;
+	}>();
 
-	const handleCopyLink = () => {
-		// TODO: Clipboard機能実装
-		Alert.alert("コピーしました", "招待リンクをクリップボードにコピーしました");
+	const handleShare = async () => {
+		if (invitationLink) {
+			await Share.share({
+				message: invitationLink,
+			});
+		}
 	};
 
 	const handleNavigateToSpace = () => {
-		router.replace("/(tabs)");
+		router.replace("/(protected)/(tabs)");
 	};
 
 	return (
@@ -38,10 +43,10 @@ export default function GroupCreatedScreen() {
 				{/* Success Message */}
 				<View style={commonStyles.sectionCenteredPadded}>
 					<Text variant="headlineSmall" style={commonStyles.titleCenter}>
-						「佐藤家」を作成しました！
+						「{groupName}」を作成しました！
 					</Text>
 					<Text variant="bodyMedium" style={commonStyles.textCenter}>
-						まずは、招待リンクをコピーして、LINEなどで{"\n"}
+						招待リンクをLINEなどで{"\n"}
 						メンバーに共有しましょう。
 					</Text>
 				</View>
@@ -55,9 +60,11 @@ export default function GroupCreatedScreen() {
 							editable={false}
 							mode="outlined"
 							dense
+							multiline={false}
+							numberOfLines={1}
 						/>
-						<Button mode="contained" onPress={handleCopyLink}>
-							コピー
+						<Button mode="contained" onPress={handleShare}>
+							共有
 						</Button>
 					</View>
 				</View>

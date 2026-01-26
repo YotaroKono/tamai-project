@@ -1,8 +1,11 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { CommonActions } from "@react-navigation/native";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 import { BottomNavigation, useTheme } from "react-native-paper";
+
+import { useUserGroups } from "@/features/group";
 
 // タブバーに表示するルート名
 const VISIBLE_ROUTES = ["shopping/index", "group/index"];
@@ -69,6 +72,22 @@ function TabBar({ navigation, state, descriptors, insets }: BottomTabBarProps) {
 }
 
 export default function TabLayout() {
+	const { hasGroup, isLoading } = useUserGroups();
+
+	// ローディング中
+	if (isLoading) {
+		return (
+			<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+				<ActivityIndicator size="large" />
+			</View>
+		);
+	}
+
+	// グループ未所属の場合はグループ登録画面にリダイレクト
+	if (!hasGroup) {
+		return <Redirect href="/(protected)/(group)/register" />;
+	}
+
 	return (
 		<Tabs
 			screenOptions={{
