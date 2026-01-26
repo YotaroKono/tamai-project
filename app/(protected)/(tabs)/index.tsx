@@ -1,12 +1,15 @@
-import { Button, View } from "react-native";
-
+import { useEffect } from "react";
+import { Button, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { useSupabase } from "@/hooks/useSupabase";
 
 export default function Page() {
 	const { signOut } = useSupabase();
 	const insets = useSafeAreaInsets();
+
+	useEffect(() => {
+		console.log("🔍 (tabs)/index.tsx が表示されています");
+	}, []);
 
 	const handleSignOut = async () => {
 		try {
@@ -26,6 +29,7 @@ export default function Page() {
 				paddingBottom: insets.bottom,
 			}}
 		>
+			<Text>🔍 この画面は (tabs)/index.tsx です</Text>
 			<Button title="SignOut" onPress={handleSignOut} />
 		</View>
 	);
