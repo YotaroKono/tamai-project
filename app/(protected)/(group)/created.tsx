@@ -1,6 +1,5 @@
-import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams } from "expo-router";
-import { Alert, View } from "react-native";
+import { Share, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,13 +11,11 @@ export default function GroupCreatedScreen() {
 		invitationLink: string;
 	}>();
 
-	const handleCopyLink = async () => {
+	const handleShare = async () => {
 		if (invitationLink) {
-			await Clipboard.setStringAsync(invitationLink);
-			Alert.alert(
-				"コピーしました",
-				"招待リンクをクリップボードにコピーしました",
-			);
+			await Share.share({
+				message: invitationLink,
+			});
 		}
 	};
 
@@ -49,7 +46,7 @@ export default function GroupCreatedScreen() {
 						「{groupName}」を作成しました！
 					</Text>
 					<Text variant="bodyMedium" style={commonStyles.textCenter}>
-						まずは、招待リンクをコピーして、LINEなどで{"\n"}
+						招待リンクをLINEなどで{"\n"}
 						メンバーに共有しましょう。
 					</Text>
 				</View>
@@ -63,9 +60,11 @@ export default function GroupCreatedScreen() {
 							editable={false}
 							mode="outlined"
 							dense
+							multiline={false}
+							numberOfLines={1}
 						/>
-						<Button mode="contained" onPress={handleCopyLink}>
-							コピー
+						<Button mode="contained" onPress={handleShare}>
+							共有
 						</Button>
 					</View>
 				</View>
