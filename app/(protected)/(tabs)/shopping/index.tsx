@@ -1,12 +1,6 @@
 import { useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import {
-	FAB,
-	PaperProvider,
-	SegmentedButtons,
-	Surface,
-	Text,
-} from "react-native-paper";
+import { FAB, SegmentedButtons, Surface, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppLogo } from "@/components/AppLogo";
@@ -18,7 +12,7 @@ import { useCreateItem } from "@/hooks/useCreateItem";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
 import { useItems } from "@/hooks/useItems";
 import { useUpdateItem } from "@/hooks/useUpdateItem";
-import { commonStyles } from "@/theme/paperTheme";
+import { colors, commonStyles, spacing } from "@/theme/paperTheme";
 import type { Item } from "@/types/items";
 
 export default function ShoppingScreen() {
@@ -99,103 +93,116 @@ export default function ShoppingScreen() {
 	};
 
 	return (
-		<PaperProvider>
-			<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
-				{/* ヘッダー */}
-				<Surface style={commonStyles.header} elevation={0}>
-					<View style={commonStyles.headerContent}>
-						<AppLogo size={40} />
-						<Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-							{groupName}
-						</Text>
-					</View>
-				</Surface>
-
-				{/* タイトル */}
-				<View style={styles.titleContainer}>
-					<Text variant="headlineSmall" style={styles.title}>
-						買い物リスト
+		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
+			{/* ヘッダー */}
+			<Surface style={commonStyles.header} elevation={0}>
+				<View style={commonStyles.headerContent}>
+					<AppLogo size={40} />
+					<Text
+						variant="titleLarge"
+						style={{ fontWeight: "bold", color: colors.text }}
+					>
+						{groupName}
 					</Text>
 				</View>
+			</Surface>
 
-				{/* タブ */}
-				<View style={styles.tabContainer}>
-					<SegmentedButtons
-						value={activeTab}
-						onValueChange={(value) =>
-							setActiveTab(value as "unpurchased" | "purchased")
-						}
-						buttons={[
-							{ value: "unpurchased", label: "未購入" },
-							{ value: "purchased", label: "購入済み" },
-						]}
-					/>
-				</View>
+			{/* タイトル */}
+			<View style={styles.titleContainer}>
+				<Text variant="headlineSmall" style={styles.title}>
+					買い物リスト
+				</Text>
+			</View>
 
-				{/* アイテムリスト */}
-				{filteredItems.length === 0 && !itemsLoading ? (
-					<EmptyItemList />
-				) : (
-					<FlatList
-						data={filteredItems}
-						keyExtractor={(item) => item.id}
-						renderItem={({ item }) => (
-							<ItemCard
-								item={item}
-								userName={getUserName(item.created_by_user_id)}
-								onPress={() => handleItemPress(item)}
-								onCheckboxPress={() => handleCheckboxPress(item)}
-								disabled={updateLoading}
-							/>
-						)}
-						contentContainerStyle={styles.listContent}
-					/>
-				)}
-
-				{/* 追加ボタン（FAB） */}
-				<FAB
-					icon="plus"
-					label="追加する"
-					style={[styles.fab, { bottom: insets.bottom + 16 }]}
-					onPress={handleAddPress}
-				/>
-
-				{/* ボトムシート */}
-				<ItemBottomSheet
-					visible={bottomSheetVisible}
-					mode={bottomSheetMode}
-					item={selectedItem}
-					onDismiss={() => setBottomSheetVisible(false)}
-					onSave={handleBottomSheetSave}
-					onDelete={
-						bottomSheetMode === "edit" ? handleBottomSheetDelete : undefined
+			{/* タブ */}
+			<View style={styles.tabContainer}>
+				<SegmentedButtons
+					value={activeTab}
+					onValueChange={(value) =>
+						setActiveTab(value as "unpurchased" | "purchased")
 					}
-					loading={createLoading || updateLoading || deleteLoading}
+					buttons={[
+						{ value: "unpurchased", label: "未購入" },
+						{ value: "purchased", label: "購入済み" },
+					]}
+					style={styles.segmentedButtons}
 				/>
 			</View>
-		</PaperProvider>
+
+			{/* アイテムリスト */}
+			{filteredItems.length === 0 && !itemsLoading ? (
+				<EmptyItemList />
+			) : (
+				<FlatList
+					data={filteredItems}
+					keyExtractor={(item) => item.id}
+					renderItem={({ item }) => (
+						<ItemCard
+							item={item}
+							userName={getUserName(item.created_by_user_id)}
+							onPress={() => handleItemPress(item)}
+							onCheckboxPress={() => handleCheckboxPress(item)}
+							disabled={updateLoading}
+						/>
+					)}
+					contentContainerStyle={styles.listContent}
+				/>
+			)}
+
+			{/* 追加ボタン（FAB） */}
+			<FAB
+				icon="plus"
+				label="追加する"
+				mode="elevated"
+				variant="secondary"
+				style={[styles.fab, { bottom: insets.bottom + spacing.md }]}
+				onPress={handleAddPress}
+			/>
+
+			{/* ボトムシート */}
+			<ItemBottomSheet
+				visible={bottomSheetVisible}
+				mode={bottomSheetMode}
+				item={selectedItem}
+				onDismiss={() => setBottomSheetVisible(false)}
+				onSave={handleBottomSheetSave}
+				onDelete={
+					bottomSheetMode === "edit" ? handleBottomSheetDelete : undefined
+				}
+				loading={createLoading || updateLoading || deleteLoading}
+			/>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	titleContainer: {
-		paddingHorizontal: 16,
-		paddingVertical: 16,
+		paddingHorizontal: spacing.md,
+		paddingVertical: spacing.md,
 	},
 	title: {
 		fontWeight: "bold",
+		color: colors.text,
 	},
 	tabContainer: {
-		paddingHorizontal: 16,
-		paddingBottom: 16,
+		paddingHorizontal: spacing.md,
+		paddingBottom: spacing.md,
+	},
+	segmentedButtons: {
+		borderRadius: spacing.sm + spacing.xs, // 12
 	},
 	listContent: {
-		paddingHorizontal: 16,
-		paddingBottom: 100,
+		paddingHorizontal: spacing.md,
+		paddingBottom: spacing.xl * 3 + spacing.md, // FAB用の余白
 	},
 	fab: {
 		position: "absolute",
-		right: 16,
-		backgroundColor: "#FF6B35",
+		right: spacing.md,
+		borderRadius: spacing.md,
+		shadowColor: colors.primary,
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 8,
+		elevation: 6,
 	},
 });

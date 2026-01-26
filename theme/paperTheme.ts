@@ -32,7 +32,7 @@ export const paperTheme = {
 
 		secondary: colors.primary,
 		onSecondary: colors.white,
-		secondaryContainer: "#FFE1C4",
+		secondaryContainer: "#FFC09A",
 		onSecondaryContainer: "#3A1B00",
 
 		background: colors.surface,
@@ -254,5 +254,61 @@ export const commonStyles = StyleSheet.create({
 		color: colors.white,
 		fontSize: 16,
 		fontWeight: "600",
+	},
+	// ボトムシート
+	bottomSheetModal: {
+		margin: 0,
+		justifyContent: "flex-end",
+	},
+	bottomSheetContainer: {
+		backgroundColor: colors.surface,
+		borderTopLeftRadius: spacing.lg,
+		borderTopRightRadius: spacing.lg,
+		paddingBottom: spacing.xl,
+		maxHeight: "80%",
+	},
+	bottomSheetHandle: {
+		width: 40,
+		height: 4,
+		backgroundColor: "#DADADA",
+		borderRadius: 2,
+		alignSelf: "center",
+		marginVertical: spacing.sm,
+	},
+	bottomSheetHeader: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingLeft: spacing.lg,
+		paddingRight: spacing.sm,
+		paddingVertical: spacing.sm,
+	},
+	bottomSheetTitle: {
+		fontWeight: "bold",
+		color: colors.text,
+	},
+	bottomSheetContent: {
+		paddingHorizontal: spacing.lg,
+		paddingTop: spacing.sm,
+	},
+	bottomSheetButtons: {
+		paddingHorizontal: spacing.lg,
+		paddingTop: spacing.sm,
+		gap: spacing.sm + spacing.xs,
+	},
+	// 入力フィールド（Paper用）
+	inputPaper: {
+		marginBottom: spacing.md,
+		backgroundColor: colors.white,
+	},
+	inputOutline: {
+		borderRadius: spacing.sm + spacing.xs,
+	},
+	// ボタン共通
+	buttonRounded: {
+		borderRadius: spacing.lg,
+	},
+	buttonContent: {
+		paddingVertical: spacing.xs,
 	},
 });
