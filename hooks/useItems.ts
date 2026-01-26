@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { ERROR_MESSAGES } from "@/constants/items";
+import {
+	ERROR_MESSAGES,
+	PURCHASED_ITEMS_DISPLAY_DAYS,
+} from "@/constants/items";
 import type { Item, ItemError } from "@/types/items";
 import { useSupabase } from "./useSupabase";
 import { useTestUser } from "./useTestUser";
@@ -24,10 +27,15 @@ export const useItems = () => {
 			setLoading(true);
 			setError(null);
 
+			// 1週間前の日時を計算
+			const cutoffDate = new Date();
+			cutoffDate.setDate(cutoffDate.getDate() - PURCHASED_ITEMS_DISPLAY_DAYS);
+
 			const query = supabase
 				.from("items")
 				.select("*")
 				.eq("space_id", spaceId)
+				.gte("updated_at", cutoffDate.toISOString())
 				.order("updated_at", { ascending: false });
 
 			const { data, error: fetchError } = await query;

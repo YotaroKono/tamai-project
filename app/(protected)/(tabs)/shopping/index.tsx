@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { FAB, PaperProvider, Surface, Text } from "react-native-paper";
+import {
+	FAB,
+	PaperProvider,
+	SegmentedButtons,
+	Surface,
+	Text,
+} from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppLogo } from "@/components/AppLogo";
@@ -25,12 +31,27 @@ export default function ShoppingScreen() {
 	const { updateItem, loading: updateLoading } = useUpdateItem();
 	const { deleteItem, loading: deleteLoading } = useDeleteItem();
 
+	// タブ状態
+	const [activeTab, setActiveTab] = useState<"unpurchased" | "purchased">(
+		"unpurchased",
+	);
+
 	// ボトムシート状態
 	const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 	const [bottomSheetMode, setBottomSheetMode] = useState<"create" | "edit">(
 		"create",
 	);
 	const [selectedItem, setSelectedItem] = useState<Item | undefined>();
+
+	// タブに応じてアイテムをフィルタリング
+	const filteredItems = useMemo(() => {
+		return items.filter((item) => {
+			if (activeTab === "unpurchased") {
+				return !item.is_purchased;
+			}
+			return item.is_purchased;
+		});
+	}, [items, activeTab]);
 
 	// アイテム追加ボタン
 	const handleAddPress = () => {
@@ -97,12 +118,26 @@ export default function ShoppingScreen() {
 					</Text>
 				</View>
 
+				{/* タブ */}
+				<View style={styles.tabContainer}>
+					<SegmentedButtons
+						value={activeTab}
+						onValueChange={(value) =>
+							setActiveTab(value as "unpurchased" | "purchased")
+						}
+						buttons={[
+							{ value: "unpurchased", label: "未購入" },
+							{ value: "purchased", label: "購入済み" },
+						]}
+					/>
+				</View>
+
 				{/* アイテムリスト */}
-				{items.length === 0 && !itemsLoading ? (
+				{filteredItems.length === 0 && !itemsLoading ? (
 					<EmptyItemList />
 				) : (
 					<FlatList
-						data={items}
+						data={filteredItems}
 						keyExtractor={(item) => item.id}
 						renderItem={({ item }) => (
 							<ItemCard
@@ -149,6 +184,10 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontWeight: "bold",
+	},
+	tabContainer: {
+		paddingHorizontal: 16,
+		paddingBottom: 16,
 	},
 	listContent: {
 		paddingHorizontal: 16,
