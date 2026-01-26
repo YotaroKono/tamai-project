@@ -66,22 +66,22 @@ export type Database = {
 			};
 			invitations: {
 				Row: {
-					created_at: string | null;
-					expires_at: string | null;
+					created_at: string;
+					expires_at: string;
 					group_id: string;
 					id: string;
 					token_hash: string;
 				};
 				Insert: {
-					created_at?: string | null;
-					expires_at?: string | null;
+					created_at?: string;
+					expires_at: string;
 					group_id: string;
 					id?: string;
 					token_hash: string;
 				};
 				Update: {
-					created_at?: string | null;
-					expires_at?: string | null;
+					created_at?: string;
+					expires_at?: string;
 					group_id?: string;
 					id?: string;
 					token_hash?: string;
@@ -98,28 +98,31 @@ export type Database = {
 			};
 			items: {
 				Row: {
-					bought_by_user_id: string | null;
+					bought_by_user_id: string;
 					created_by_user_id: string;
 					id: string;
-					is_checked: boolean | null;
+					is_purchased: boolean;
+					memo: string | null;
 					name: string;
 					space_id: string;
 					updated_at: string | null;
 				};
 				Insert: {
-					bought_by_user_id?: string | null;
+					bought_by_user_id: string;
 					created_by_user_id: string;
 					id?: string;
-					is_checked?: boolean | null;
+					is_purchased?: boolean;
+					memo?: string | null;
 					name: string;
 					space_id: string;
 					updated_at?: string | null;
 				};
 				Update: {
-					bought_by_user_id?: string | null;
+					bought_by_user_id?: string;
 					created_by_user_id?: string;
 					id?: string;
-					is_checked?: boolean | null;
+					is_purchased?: boolean;
+					memo?: string | null;
 					name?: string;
 					space_id?: string;
 					updated_at?: string | null;
