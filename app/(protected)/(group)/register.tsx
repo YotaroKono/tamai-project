@@ -1,16 +1,17 @@
 import { router } from "expo-router";
 import { useState } from "react";
+import { View } from "react-native";
 import {
-	ActivityIndicator,
-	Pressable,
+	Button,
+	HelperText,
+	SegmentedButtons,
 	Text,
 	TextInput,
-	View,
-} from "react-native";
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCreateGroup } from "@/features/group";
-import { styles } from "./register.styles";
+import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupRegisterScreen() {
 	const [activeTab, setActiveTab] = useState<"create" | "join">("create");
@@ -57,112 +58,96 @@ export default function GroupRegisterScreen() {
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
-			{/* Logo */}
-			<View style={styles.logoContainer}>
-				<View style={styles.logo}>
-					<Text style={styles.logoText}>S</Text>
+		<SafeAreaView style={commonStyles.screenContainer}>
+			<View style={commonStyles.contentLarge}>
+				{/* Logo */}
+				<View style={commonStyles.logoContainer}>
+					<View style={commonStyles.logo}>
+						<Text style={commonStyles.logoText}>S</Text>
+					</View>
 				</View>
-			</View>
 
-			{/* Welcome Message */}
-			<View style={styles.welcomeContainer}>
-				<View style={styles.avatarPlaceholder}>
-					<Text style={styles.avatarIcon}>👤</Text>
+				{/* Welcome Message */}
+				<View style={commonStyles.sectionCentered}>
+					<View style={commonStyles.avatarPlaceholder}>
+						<Text style={commonStyles.avatarIcon}>👤</Text>
+					</View>
+					<Text style={commonStyles.welcomeText}>ようこそ、佐藤さん</Text>
+					<Text style={commonStyles.descriptionText}>
+						ファミリースペースを作成するか、{"\n"}
+						既存のスペースに参加してください
+					</Text>
 				</View>
-				<Text style={styles.welcomeText}>ようこそ、佐藤さん</Text>
-				<Text style={styles.descriptionText}>
-					ファミリースペースを作成するか、{"\n"}
-					既存のスペースに参加してください
-				</Text>
-			</View>
 
-			{/* Tab Navigation */}
-			<View style={styles.tabContainer}>
-				<Pressable
-					style={[styles.tab, activeTab === "create" && styles.activeTab]}
-					onPress={() => {
-						setActiveTab("create");
-						setError("");
-					}}
-				>
-					<Text
-						style={[
-							styles.tabText,
-							activeTab === "create" && styles.activeTabText,
+				{/* Tab Navigation */}
+				<View style={commonStyles.section}>
+					<SegmentedButtons
+						value={activeTab}
+						onValueChange={(value) => {
+							setActiveTab(value as "create" | "join");
+							setError("");
+						}}
+						buttons={[
+							{ value: "create", label: "作成する" },
+							{ value: "join", label: "参加する" },
 						]}
-					>
-						作成する
-					</Text>
-				</Pressable>
-				<Pressable
-					style={[styles.tab, activeTab === "join" && styles.activeTab]}
-					onPress={() => {
-						setActiveTab("join");
-						setError("");
-					}}
-				>
-					<Text
-						style={[
-							styles.tabText,
-							activeTab === "join" && styles.activeTabText,
-						]}
-					>
-						参加する
-					</Text>
-				</Pressable>
-			</View>
+					/>
+				</View>
 
-			{/* Form Content */}
-			<View style={styles.formContainer}>
-				{activeTab === "create" ? (
-					<>
-						<Text style={styles.label}>ファミリー名</Text>
-						<TextInput
-							style={styles.input}
-							value={familyName}
-							onChangeText={(text) => {
-								setFamilyName(text);
-								setError("");
-							}}
-							placeholder=""
-						/>
-						{error && <Text style={styles.errorText}>{error}</Text>}
+				{/* Form Content */}
+				<View style={commonStyles.formContainer}>
+					{activeTab === "create" ? (
+						<>
+							<TextInput
+								label="ファミリー名"
+								mode="outlined"
+								value={familyName}
+								onChangeText={(text) => {
+									setFamilyName(text);
+									setError("");
+								}}
+								error={!!error}
+							/>
+							<HelperText type="error" visible={!!error}>
+								{error}
+							</HelperText>
 
-						<Pressable
-							style={[
-								styles.submitButton,
-								isLoading && styles.submitButtonDisabled,
-							]}
-							onPress={handleCreateGroup}
-							disabled={isLoading}
-						>
-							{isLoading ? (
-								<ActivityIndicator color="#FFFFFF" />
-							) : (
-								<Text style={styles.submitButtonText}>スペースを作成</Text>
-							)}
-						</Pressable>
-					</>
-				) : (
-					<>
-						<Text style={styles.label}>招待リンク</Text>
-						<TextInput
-							style={styles.input}
-							value={invitationLinkInput}
-							onChangeText={(text) => {
-								setInvitationLinkInput(text);
-								setError("");
-							}}
-							placeholder=""
-						/>
-						{error && <Text style={styles.errorText}>{error}</Text>}
+							<Button
+								mode="contained"
+								onPress={handleCreateGroup}
+								loading={isLoading}
+								disabled={isLoading}
+								contentStyle={commonStyles.buttonContentLarge}
+							>
+								スペースを作成
+							</Button>
+						</>
+					) : (
+						<>
+							<TextInput
+								label="招待リンク"
+								mode="outlined"
+								value={invitationLinkInput}
+								onChangeText={(text) => {
+									setInvitationLinkInput(text);
+									setError("");
+								}}
+								error={!!error}
+							/>
+							<HelperText type="error" visible={!!error}>
+								{error}
+							</HelperText>
 
-						<Pressable style={styles.submitButton} onPress={handleJoinGroup}>
-							<Text style={styles.submitButtonText}>スペースに参加する</Text>
-						</Pressable>
-					</>
-				)}
+							<Button
+								mode="contained"
+								onPress={handleJoinGroup}
+								contentStyle={commonStyles.buttonContentLarge}
+							>
+								スペースに参加する
+							</Button>
+						</>
+					)}
+				</View>
 			</View>
 		</SafeAreaView>
 	);
