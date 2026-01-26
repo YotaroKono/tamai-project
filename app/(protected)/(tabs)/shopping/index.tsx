@@ -7,7 +7,7 @@ import { commonStyles } from "@/theme/paperTheme";
 
 export default function ShoppingScreen() {
 	const insets = useSafeAreaInsets();
-	const familyName = "佐藤家";
+	const groupName = "佐藤家";
 
 	return (
 		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
@@ -16,7 +16,7 @@ export default function ShoppingScreen() {
 				<View style={commonStyles.headerContent}>
 					<AppLogo size={40} />
 					<Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-						{familyName}
+						{groupName}
 					</Text>
 				</View>
 			</Surface>

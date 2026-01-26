@@ -30,9 +30,9 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="family/index"
+				name="group/index"
 				options={{
-					title: "ファミリー",
+					title: "グループ",
 					tabBarIcon: ({ color, focused }) => (
 						<MaterialCommunityIcons
 							name={focused ? "account-group" : "account-group-outline"}
@@ -45,12 +45,6 @@ export default function TabLayout() {
 			{/* 以下のスクリーンはタブに表示しない */}
 			<Tabs.Screen
 				name="index"
-				options={{
-					href: null,
-				}}
-			/>
-			<Tabs.Screen
-				name="profile"
 				options={{
 					href: null,
 				}}

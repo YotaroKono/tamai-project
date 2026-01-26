@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function FamilyScreen() {
+export default function GroupScreen() {
 	const insets = useSafeAreaInsets();
 
 	return (
 		<View style={[styles.container, { paddingTop: insets.top }]}>
-			<Text style={styles.title}>ファミリー</Text>
-			<Text style={styles.placeholder}>ファミリー機能は準備中です</Text>
+			<Text style={styles.title}>グループ</Text>
+			<Text style={styles.placeholder}>グループ機能は準備中です</Text>
 		</View>
 	);
 }
