@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
-import type { CreateGroupResult, Group } from "./types";
+import type { CreateGroupResult, Group, JoinGroupResult } from "./types";
 
 const generateInvitationToken = (): string => {
 	const chars =
@@ -149,4 +149,82 @@ export const getUserGroups = async (
 export const generateInvitationLink = (token: string): string => {
 	// TODO: Replace with actual app scheme or domain
 	return `sato://invite/${token}`;
+};
+
+/**
+ * 招待リンクからトークンを抽出する
+ * 入力形式: "sato://invite/{token}" または "{token}"
+ */
+export const extractTokenFromLink = (input: string): string => {
+	const trimmed = input.trim();
+	const prefix = "sato://invite/";
+	if (trimmed.startsWith(prefix)) {
+		return trimmed.slice(prefix.length);
+	}
+	return trimmed;
+};
+
+/**
+ * 招待トークンを使ってグループに参加する
+ */
+export const joinGroupByInvitation = async (
+	supabase: SupabaseClient<Database>,
+	userId: string,
+	invitationToken: string,
+): Promise<JoinGroupResult> => {
+	// 1. ユーザーが既にグループに所属しているかチェック
+	const existingGroups = await getUserGroups(supabase, userId);
+	if (existingGroups.length > 0) {
+		throw new Error("参加できるグループは1つまでです。");
+	}
+
+	// 2. トークンをハッシュ化して招待を検索
+	const tokenHash = hashToken(invitationToken);
+	const { data: invitation, error: invitationError } = await supabase
+		.from("invitations")
+		.select("*")
+		.eq("token_hash", tokenHash)
+		.single();
+
+	if (invitationError || !invitation) {
+		throw new Error(
+			"この招待リンクは無効です。もう一度招待を依頼してください。",
+		);
+	}
+
+	// 3. 有効期限をチェック
+	const now = new Date();
+	const expiresAt = new Date(invitation.expires_at);
+	if (now > expiresAt) {
+		throw new Error(
+			"この招待リンクは無効です。もう一度招待を依頼してください。",
+		);
+	}
+
+	// 4. グループメンバーに追加
+	const { error: memberError } = await supabase.from("group_members").insert({
+		group_id: invitation.group_id,
+		user_id: userId,
+	});
+
+	if (memberError) {
+		throw new Error(
+			"グループに参加できませんでした。時間をおいて、もう一度お試しください。",
+		);
+	}
+
+	// 5. グループ情報を取得して返す
+	const { data: group, error: groupError } = await supabase
+		.from("groups")
+		.select("*")
+		.eq("id", invitation.group_id)
+		.single();
+
+	if (groupError || !group) {
+		throw new Error(
+			"グループに参加できませんでした。時間をおいて、もう一度お試しください。",
+		);
+	}
+
+	return { group };
 };
