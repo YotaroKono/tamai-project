@@ -1,63 +1,30 @@
-import { StyleSheet, View } from "react-native";
-import { Surface, Text, useTheme } from "react-native-paper";
+import { View } from "react-native";
+import { Surface, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppLogo } from "@/components/AppLogo";
+import { commonStyles } from "@/theme/paperTheme";
 
 export default function ShoppingScreen() {
 	const insets = useSafeAreaInsets();
-	const theme = useTheme();
 	const familyName = "佐藤家";
 
 	return (
-		<View style={[styles.container, { paddingTop: insets.top }]}>
+		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
 			{/* ヘッダー */}
-			<Surface style={styles.header} elevation={0}>
-				<View style={styles.headerContent}>
+			<Surface style={commonStyles.header} elevation={0}>
+				<View style={commonStyles.headerContent}>
 					<AppLogo size={40} />
-					<Text variant="titleLarge" style={styles.familyName}>
+					<Text variant="titleLarge" style={{ fontWeight: "bold" }}>
 						{familyName}
 					</Text>
 				</View>
 			</Surface>
 
 			{/* コンテンツ */}
-			<View style={styles.content}>
-				<Text
-					variant="bodyLarge"
-					style={{ color: theme.colors.onSurfaceVariant }}
-				>
-					買い物機能は準備中です
-				</Text>
+			<View style={commonStyles.contentCentered}>
+				<Text variant="bodyLarge">買い物機能は準備中です</Text>
 			</View>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#FFF5F0",
-	},
-	header: {
-		backgroundColor: "transparent",
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-		alignItems: "center",
-	},
-	headerContent: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 12,
-	},
-	familyName: {
-		fontWeight: "bold",
-		color: "#333",
-	},
-	content: {
-		flex: 1,
-		paddingHorizontal: 16,
-		alignItems: "center",
-		marginTop: 40,
-	},
-});
