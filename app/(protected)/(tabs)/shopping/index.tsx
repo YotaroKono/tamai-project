@@ -1,34 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
+import { Surface, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function FamilyScreen() {
+import { AppLogo } from "@/components/AppLogo";
+import { commonStyles } from "@/theme/paperTheme";
+
+export default function ShoppingScreen() {
 	const insets = useSafeAreaInsets();
+	const groupName = "佐藤家";
 
 	return (
-		<View style={[styles.container, { paddingTop: insets.top }]}>
-			<Text style={styles.title}>買い物</Text>
-			<Text style={styles.placeholder}>買い物機能は準備中です</Text>
+		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
+			{/* ヘッダー */}
+			<Surface style={commonStyles.header} elevation={0}>
+				<View style={commonStyles.headerContent}>
+					<AppLogo size={40} />
+					<Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+						{groupName}
+					</Text>
+				</View>
+			</Surface>
+
+			{/* コンテンツ */}
+			<View style={commonStyles.contentCentered}>
+				<Text variant="bodyLarge">買い物機能は準備中です</Text>
+			</View>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#FFF5F0",
-		paddingHorizontal: 16,
-	},
-	title: {
-		fontSize: 28,
-		fontWeight: "bold",
-		color: "#333",
-		marginBottom: 16,
-		marginTop: 8,
-	},
-	placeholder: {
-		fontSize: 16,
-		color: "#666",
-		textAlign: "center",
-		marginTop: 40,
-	},
-});

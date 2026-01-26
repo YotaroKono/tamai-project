@@ -4,8 +4,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useSupabase } from "@/hooks/useSupabase";
 
-import { useUser } from "@/hooks/useUser";
-
 export default function Page() {
 	const { signOut } = useSupabase();
 	const insets = useSafeAreaInsets();
