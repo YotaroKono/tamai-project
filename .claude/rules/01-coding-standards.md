@@ -116,7 +116,7 @@ import Button from '@/shared/components/Button'
 
 ## Formatting
 
-- Follow ESLint and Prettier.
+- Follow Biome.
 - Do not manually format code.
 
 ---
