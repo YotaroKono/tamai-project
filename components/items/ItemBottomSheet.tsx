@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import {
+	KeyboardAvoidingView,
+	Platform,
+	Pressable,
+	StyleSheet,
+	View,
+} from "react-native";
 import {
 	Button,
 	Divider,
 	IconButton,
-	Modal,
 	Portal,
 	Surface,
 	Text,
@@ -76,22 +81,28 @@ export function ItemBottomSheet({
 		resetForm();
 	};
 
+	if (!visible) return null;
+
 	return (
 		<Portal>
-			<Modal
-				visible={visible}
-				onDismiss={onDismiss}
-				contentContainerStyle={styles.modalContainer}
+			{/* 背景オーバーレイ */}
+			<Pressable style={styles.overlay} onPress={onDismiss}>
+				<View style={styles.overlayBackground} />
+			</Pressable>
+
+			{/* ボトムシート本体 */}
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				style={styles.keyboardAvoidingView}
+				pointerEvents="box-none"
 			>
-				<Surface
-					style={[
-						styles.surface,
-						{ paddingBottom: insets.bottom + spacing.lg },
-					]}
-					elevation={2}
-				>
-					<KeyboardAvoidingView
-						behavior={Platform.OS === "ios" ? "padding" : "height"}
+				<View style={styles.bottomSheetWrapper} pointerEvents="box-none">
+					<Surface
+						style={[
+							styles.surface,
+							{ paddingBottom: insets.bottom + spacing.lg },
+						]}
+						elevation={5}
 					>
 						{/* ドラッグハンドル */}
 						<View style={styles.handle} />
@@ -168,16 +179,28 @@ export function ItemBottomSheet({
 								</Button>
 							)}
 						</View>
-					</KeyboardAvoidingView>
-				</Surface>
-			</Modal>
+					</Surface>
+				</View>
+			</KeyboardAvoidingView>
 		</Portal>
 	);
 }
 
 const styles = StyleSheet.create({
-	modalContainer: {
-		margin: 0,
+	overlay: {
+		...StyleSheet.absoluteFillObject,
+		zIndex: 1,
+	},
+	overlayBackground: {
+		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+	},
+	keyboardAvoidingView: {
+		...StyleSheet.absoluteFillObject,
+		zIndex: 2,
+	},
+	bottomSheetWrapper: {
+		flex: 1,
 		justifyContent: "flex-end",
 	},
 	surface: {
