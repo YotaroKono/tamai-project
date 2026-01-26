@@ -2,11 +2,12 @@ import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useContext, useEffect, useState } from "react";
 
 import { SupabaseContext } from "@/context/supabase-context";
+import type { Database } from "@/types/database";
 
 interface UseSupabaseProps {
 	isLoaded: boolean;
 	session: Session | null | undefined;
-	supabase: SupabaseClient;
+	supabase: SupabaseClient<Database>;
 	signOut: () => Promise<void>;
 }
 

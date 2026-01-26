@@ -1,20 +1,28 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import * as Clipboard from "expo-clipboard";
+import { router, useLocalSearchParams } from "expo-router";
 import { Alert, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "./created.styles";
 
 export default function GroupCreatedScreen() {
-	const [invitationLink] = useState("https://example.com");
+	const { groupName, invitationLink } = useLocalSearchParams<{
+		groupName: string;
+		invitationLink: string;
+	}>();
 
-	const handleCopyLink = () => {
-		// TODO: Clipboard機能実装
-		Alert.alert("コピーしました", "招待リンクをクリップボードにコピーしました");
+	const handleCopyLink = async () => {
+		if (invitationLink) {
+			await Clipboard.setStringAsync(invitationLink);
+			Alert.alert(
+				"コピーしました",
+				"招待リンクをクリップボードにコピーしました",
+			);
+		}
 	};
 
 	const handleNavigateToSpace = () => {
-		router.replace("/(tabs)");
+		router.replace("/(protected)/(tabs)");
 	};
 
 	return (
@@ -35,7 +43,7 @@ export default function GroupCreatedScreen() {
 
 			{/* Success Message */}
 			<View style={styles.messageContainer}>
-				<Text style={styles.successTitle}>「佐藤家」を作成しました！</Text>
+				<Text style={styles.successTitle}>「{groupName}」を作成しました！</Text>
 				<Text style={styles.successDescription}>
 					まずは、招待リンクをコピーして、LINEなどで{"\n"}
 					メンバーに共有しましょう。

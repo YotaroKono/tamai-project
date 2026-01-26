@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
+import { DEV_SKIP_AUTH } from "@/config/dev";
 import { useSupabase } from "@/hooks/useSupabase";
 import { SupabaseProvider } from "@/providers/supabase-provider";
 import { paperTheme } from "@/theme/paperTheme";
@@ -15,9 +16,6 @@ export default function RootLayout() {
 		</SupabaseProvider>
 	);
 }
-
-// 開発モード: true にすると認証をスキップして protected 画面に直接アクセス可能
-const DEV_SKIP_AUTH = true;
 
 SplashScreen.setOptions({
 	duration: 500,

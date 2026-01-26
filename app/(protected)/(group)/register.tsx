@@ -1,41 +1,59 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import {
+	ActivityIndicator,
+	Pressable,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useCreateGroup } from "@/features/group";
 import { styles } from "./register.styles";
 
 export default function GroupRegisterScreen() {
 	const [activeTab, setActiveTab] = useState<"create" | "join">("create");
 	const [familyName, setFamilyName] = useState("");
-	const [invitationLink, setInvitationLink] = useState("");
+	const [invitationLinkInput, setInvitationLinkInput] = useState("");
 	const [error, setError] = useState("");
 
-	useEffect(() => {
-		console.log("🔍 (group)/register.tsx が表示されています");
-	}, []);
+	const { createGroupAsync, isLoading } = useCreateGroup();
 
-	const handleCreateGroup = () => {
+	const handleCreateGroup = async () => {
 		setError("");
 		if (!familyName.trim()) {
 			setError("必須項目です。入力お願いします。");
 			return;
 		}
 
-		// TODO: グループ作成ロジック
-		console.log("Creating group:", familyName);
-		router.push("./created");
+		try {
+			const { result, invitationLink } = await createGroupAsync(
+				familyName.trim(),
+			);
+			router.push({
+				pathname: "./created",
+				params: {
+					groupName: result.group.name,
+					invitationLink: invitationLink,
+				},
+			});
+		} catch {
+			setError(
+				"グループを作成できませんでした。時間をおいて、もう一度お試しください。",
+			);
+		}
 	};
 
 	const handleJoinGroup = () => {
 		setError("");
-		if (!invitationLink.trim()) {
+		if (!invitationLinkInput.trim()) {
 			setError("この項目は必須です。");
 			return;
 		}
 
 		// TODO: グループ参加ロジック
-		console.log("Joining group with link:", invitationLink);
+		console.log("Joining group with link:", invitationLinkInput);
 	};
 
 	return (
@@ -111,8 +129,19 @@ export default function GroupRegisterScreen() {
 						/>
 						{error && <Text style={styles.errorText}>{error}</Text>}
 
-						<Pressable style={styles.submitButton} onPress={handleCreateGroup}>
-							<Text style={styles.submitButtonText}>スペースを作成</Text>
+						<Pressable
+							style={[
+								styles.submitButton,
+								isLoading && styles.submitButtonDisabled,
+							]}
+							onPress={handleCreateGroup}
+							disabled={isLoading}
+						>
+							{isLoading ? (
+								<ActivityIndicator color="#FFFFFF" />
+							) : (
+								<Text style={styles.submitButtonText}>スペースを作成</Text>
+							)}
 						</Pressable>
 					</>
 				) : (
@@ -120,9 +149,9 @@ export default function GroupRegisterScreen() {
 						<Text style={styles.label}>招待リンク</Text>
 						<TextInput
 							style={styles.input}
-							value={invitationLink}
+							value={invitationLinkInput}
 							onChangeText={(text) => {
-								setInvitationLink(text);
+								setInvitationLinkInput(text);
 								setError("");
 							}}
 							placeholder=""

@@ -119,4 +119,7 @@ export const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "600",
 	},
+	submitButtonDisabled: {
+		opacity: 0.6,
+	},
 });
