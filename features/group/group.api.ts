@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { APP_SCHEME_PREFIX, INVITATION_URL_PREFIX } from "@/config/links";
 import type { Database } from "@/types/database";
 import type { CreateGroupResult, Group, JoinGroupResult } from "./types";
 
@@ -146,21 +147,35 @@ export const getUserGroups = async (
 	return groups || [];
 };
 
+/**
+ * 招待リンクを生成する
+ * ユニバーサルリンク形式: https://sato-app.example.com/invite/{token}
+ */
 export const generateInvitationLink = (token: string): string => {
-	// TODO: Replace with actual app scheme or domain
-	return `sato://invite/${token}`;
+	return `${INVITATION_URL_PREFIX}${token}`;
 };
 
 /**
  * 招待リンクからトークンを抽出する
- * 入力形式: "sato://invite/{token}" または "{token}"
+ * 入力形式:
+ * - "https://sato-app.example.com/invite/{token}" (ユニバーサルリンク)
+ * - "sato://invite/{token}" (アプリスキーム)
+ * - "{token}" (トークンのみ)
  */
 export const extractTokenFromLink = (input: string): string => {
 	const trimmed = input.trim();
-	const prefix = "sato://invite/";
-	if (trimmed.startsWith(prefix)) {
-		return trimmed.slice(prefix.length);
+
+	// ユニバーサルリンク形式
+	if (trimmed.startsWith(INVITATION_URL_PREFIX)) {
+		return trimmed.slice(INVITATION_URL_PREFIX.length);
 	}
+
+	// アプリスキーム形式（フォールバック）
+	if (trimmed.startsWith(APP_SCHEME_PREFIX)) {
+		return trimmed.slice(APP_SCHEME_PREFIX.length);
+	}
+
+	// トークンのみ
 	return trimmed;
 };
 

@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
 	Button,
@@ -14,6 +14,10 @@ import { useCreateGroup, useJoinGroup } from "@/features/group";
 import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupRegisterScreen() {
+	const { invitationToken } = useLocalSearchParams<{
+		invitationToken?: string;
+	}>();
+
 	const [activeTab, setActiveTab] = useState<"create" | "join">("create");
 	const [familyName, setFamilyName] = useState("");
 	const [invitationLinkInput, setInvitationLinkInput] = useState("");
@@ -21,6 +25,14 @@ export default function GroupRegisterScreen() {
 
 	const { createGroupAsync, isLoading: isCreating } = useCreateGroup();
 	const { joinGroup, isLoading: isJoining } = useJoinGroup();
+
+	// 招待トークンがURLパラメータで渡された場合、参加タブに切り替えて入力
+	useEffect(() => {
+		if (invitationToken) {
+			setActiveTab("join");
+			setInvitationLinkInput(invitationToken);
+		}
+	}, [invitationToken]);
 
 	const handleCreateGroup = async () => {
 		setError("");
