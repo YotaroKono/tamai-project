@@ -121,13 +121,6 @@ export default function TabLayout() {
 					),
 				}}
 			/>
-			{/* 以下のスクリーンはタブに表示しない */}
-			<Tabs.Screen
-				name="index"
-				options={{
-					href: null,
-				}}
-			/>
 		</Tabs>
 	);
 }
