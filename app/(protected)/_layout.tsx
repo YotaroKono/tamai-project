@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 export default function ProtectedLayout() {
 	// TODO: グループ所属チェックロジック (後で実装)
-	const hasGroup = false; // モック: グループ未所属
+	const hasGroup = true; // モック: グループ未所属
 
 	useEffect(() => {
 		console.log("🔍 ProtectedLayout - hasGroup:", hasGroup);
