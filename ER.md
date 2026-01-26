@@ -42,7 +42,7 @@ erDiagram
         uuid id PK
         uuid space_id FK
         string name
-        boolean is_checked
+        boolean is_purchased
         uuid created_by_user_id FK
         uuid bought_by_user_id FK
         datetime updated_at
@@ -112,7 +112,7 @@ erDiagram
         uuid space_id FK
         uuid category_id FK
         string name
-        boolean is_checked
+        boolean is_purchased
         uuid created_by_user_id FK
         uuid bought_by_user_id FK
         datetime updated_at
