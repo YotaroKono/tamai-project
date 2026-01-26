@@ -10,7 +10,7 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useCreateGroup } from "@/features/group";
+import { useCreateGroup, useJoinGroup } from "@/features/group";
 import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupRegisterScreen() {
@@ -19,7 +19,8 @@ export default function GroupRegisterScreen() {
 	const [invitationLinkInput, setInvitationLinkInput] = useState("");
 	const [error, setError] = useState("");
 
-	const { createGroupAsync, isLoading } = useCreateGroup();
+	const { createGroupAsync, isLoading: isCreating } = useCreateGroup();
+	const { joinGroup, isLoading: isJoining } = useJoinGroup();
 
 	const handleCreateGroup = async () => {
 		setError("");
@@ -46,15 +47,23 @@ export default function GroupRegisterScreen() {
 		}
 	};
 
-	const handleJoinGroup = () => {
+	const handleJoinGroup = async () => {
 		setError("");
 		if (!invitationLinkInput.trim()) {
-			setError("この項目は必須です。");
+			setError("必須項目です。入力お願いします。");
 			return;
 		}
 
-		// TODO: グループ参加ロジック
-		console.log("Joining group with link:", invitationLinkInput);
+		try {
+			await joinGroup(invitationLinkInput.trim());
+			router.replace("/(protected)/(tabs)");
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error
+					? err.message
+					: "グループに参加できませんでした。時間をおいて、もう一度お試しください。";
+			setError(errorMessage);
+		}
 	};
 
 	return (
@@ -115,8 +124,8 @@ export default function GroupRegisterScreen() {
 							<Button
 								mode="contained"
 								onPress={handleCreateGroup}
-								loading={isLoading}
-								disabled={isLoading}
+								loading={isCreating}
+								disabled={isCreating}
 								contentStyle={commonStyles.buttonContentLarge}
 							>
 								スペースを作成
@@ -141,6 +150,8 @@ export default function GroupRegisterScreen() {
 							<Button
 								mode="contained"
 								onPress={handleJoinGroup}
+								loading={isJoining}
+								disabled={isJoining}
 								contentStyle={commonStyles.buttonContentLarge}
 							>
 								スペースに参加する

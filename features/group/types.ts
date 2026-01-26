@@ -18,3 +18,7 @@ export type CreateGroupResult = {
 	invitation: Invitation;
 	invitationToken: string;
 };
+
+export type JoinGroupResult = {
+	group: Group;
+};
