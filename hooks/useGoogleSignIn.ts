@@ -45,7 +45,9 @@ export const useGoogleSignIn = () => {
 
 		if (result.type === "success") {
 			const url = result.url;
-			const params = new URL(url).searchParams;
+			// フラグメント（#の後）からトークンを取得
+			const fragment = url.split("#")[1];
+			const params = new URLSearchParams(fragment);
 			const accessToken = params.get("access_token");
 			const refreshToken = params.get("refresh_token");
 
