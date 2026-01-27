@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn";
@@ -22,34 +22,28 @@ export default function Page() {
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.logoContainer}>
-				<Text style={styles.logo}>S</Text>
-				<Text style={styles.appName}>sato</Text>
+				<Image
+					source={require("@/assets/icon.png")}
+					style={styles.logo}
+					resizeMode="contain"
+				/>
+				<Text style={styles.catchphrase}>家族全員で必要な買い物を把握する</Text>
 			</View>
 
 			<View style={styles.buttonContainer}>
+				<Text style={styles.sectionTitle}>会員登録</Text>
+
 				<Pressable style={styles.googleButton} onPress={handleGoogleSignIn}>
-					<Text style={styles.googleButtonText}>Continue with Google</Text>
+					<Text style={styles.googleButtonText}>Google</Text>
 				</Pressable>
 
-				<View style={styles.dividerContainer}>
-					<View style={styles.dividerLine} />
-					<Text style={styles.dividerText}>OR</Text>
-					<View style={styles.dividerLine} />
+				<View style={styles.loginLinkContainer}>
+					<Text style={styles.loginText}>ログインは</Text>
+					<Pressable onPress={() => router.push("/sign-in")}>
+						<Text style={styles.loginLink}>こちら</Text>
+					</Pressable>
+					<Text style={styles.loginText}>から</Text>
 				</View>
-
-				<Pressable
-					style={styles.primaryButton}
-					onPress={() => router.push("/sign-up")}
-				>
-					<Text style={styles.primaryButtonText}>Sign Up</Text>
-				</Pressable>
-
-				<Pressable
-					style={styles.secondaryButton}
-					onPress={() => router.push("/sign-in")}
-				>
-					<Text style={styles.secondaryButtonText}>Sign In</Text>
-				</Pressable>
 			</View>
 		</SafeAreaView>
 	);
