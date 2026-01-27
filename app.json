@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.flemingvincent.expo-supabase-starter",
       "associatedDomains": [
-        "applinks:sato-app.example.com"
+        "applinks:sato-one.vercel.app"
       ]
     },
     "android": {
@@ -38,7 +38,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "sato-app.example.com",
+              "host": "sato-one.vercel.app",
               "pathPrefix": "/invite"
             }
           ],

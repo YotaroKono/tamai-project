@@ -3,8 +3,8 @@
  * 本番環境では実際のドメインに置き換えてください
  */
 
-// ユニバーサルリンク用ドメイン（ダミー）
-export const INVITATION_DOMAIN = "https://sato-app.example.com";
+// ユニバーサルリンク用ドメイン
+export const INVITATION_DOMAIN = "https://sato-one.vercel.app";
 
 // 招待リンクのパス
 export const INVITATION_PATH = "/invite";

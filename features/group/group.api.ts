@@ -149,7 +149,7 @@ export const getUserGroups = async (
 
 /**
  * 招待リンクを生成する
- * ユニバーサルリンク形式: https://sato-app.example.com/invite/{token}
+ * ユニバーサルリンク形式: https://sato-one.vercel.app/invite/{token}
  */
 export const generateInvitationLink = (token: string): string => {
 	return `${INVITATION_URL_PREFIX}${token}`;
@@ -158,7 +158,7 @@ export const generateInvitationLink = (token: string): string => {
 /**
  * 招待リンクからトークンを抽出する
  * 入力形式:
- * - "https://sato-app.example.com/invite/{token}" (ユニバーサルリンク)
+ * - "https://sato-one.vercel.app/invite/{token}" (ユニバーサルリンク)
  * - "sato://invite/{token}" (アプリスキーム)
  * - "{token}" (トークンのみ)
  */
