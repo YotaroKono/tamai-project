@@ -112,7 +112,7 @@ export function ItemBottomSheet({
 				</TouchableWithoutFeedback>
 
 				{/* ボトムシート本体 */}
-				<Surface style={styles.surface} elevation={5}>
+				<Surface style={styles.surface} elevation={0}>
 					{/* ドラッグハンドル */}
 					<View style={styles.handle} />
 

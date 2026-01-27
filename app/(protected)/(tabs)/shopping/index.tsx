@@ -128,6 +128,7 @@ export default function ShoppingScreen() {
 						{ value: "purchased", label: "購入済み" },
 					]}
 					style={styles.segmentedButtons}
+					theme={{ roundness: 2 }}
 				/>
 			</View>
 
@@ -183,6 +184,7 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.md,
 	},
 	title: {
+		fontSize: 20,
 		fontWeight: "bold",
 		color: colors.text,
 	},
@@ -191,7 +193,7 @@ const styles = StyleSheet.create({
 		paddingBottom: spacing.md,
 	},
 	segmentedButtons: {
-		borderRadius: spacing.sm + spacing.xs, // 12
+		borderRadius: 16,
 	},
 	listContent: {
 		paddingHorizontal: spacing.md,
