@@ -5,32 +5,45 @@ import {
 	DEV_MODE,
 	TEST_USER_NAMES,
 } from "@/constants/dev";
+import { useUserGroups, useUserSpace } from "@/features/group";
 import { useSupabase } from "./useSupabase";
 
 /**
- * テストユーザー情報を取得するHook
+ * ユーザー情報を取得するHook
  * 開発モード時はテストデータを返し、本番モードでは実際のユーザー情報を返す
  */
 export const useTestUser = () => {
 	const { session } = useSupabase();
+	const { groups } = useUserGroups();
+	const groupId = groups.length > 0 ? groups[0].id : null;
+	const { space } = useUserSpace(groupId);
 
-	// 本番環境または認証済みの場合は実際のユーザー情報を使用
-	if (!DEV_MODE || session) {
+	// 開発モードかつ未ログインの場合はテストデータを使用
+	if (DEV_MODE && !session) {
+		console.log("🧪 Using test data:", {
+			userId: CURRENT_TEST_USER,
+			spaceId: CURRENT_TEST_SPACE,
+		});
 		return {
-			userId: session?.user.id || null,
-			groupId: null, // TODO: 実際のグループ取得ロジック(他のエンジニア担当)
-			spaceId: null, // TODO: 実際のスペース取得ロジック(他のエンジニア担当)
-			userName: session?.user.user_metadata?.name || "不明",
-			isTestMode: false,
+			userId: CURRENT_TEST_USER,
+			groupId: CURRENT_TEST_GROUP,
+			spaceId: CURRENT_TEST_SPACE,
+			userName: TEST_USER_NAMES[CURRENT_TEST_USER] || "テストユーザー",
+			isTestMode: true,
 		};
 	}
 
-	// 開発モード: テストデータを返す
+	// 本番環境または認証済みの場合は実際のユーザー情報を使用
+	console.log("🔐 Using real data:", {
+		userId: session?.user.id || null,
+		groupId,
+		spaceId: space?.id || null,
+	});
 	return {
-		userId: CURRENT_TEST_USER,
-		groupId: CURRENT_TEST_GROUP,
-		spaceId: CURRENT_TEST_SPACE,
-		userName: TEST_USER_NAMES[CURRENT_TEST_USER] || "テストユーザー",
-		isTestMode: true,
+		userId: session?.user.id || null,
+		groupId: groupId,
+		spaceId: space?.id || null,
+		userName: session?.user.user_metadata?.name || "不明",
+		isTestMode: false,
 	};
 };
