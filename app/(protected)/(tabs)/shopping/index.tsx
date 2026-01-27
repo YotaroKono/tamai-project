@@ -126,7 +126,7 @@ export default function ShoppingScreen() {
 						{ value: "purchased", label: "購入済み" },
 					]}
 					style={styles.segmentedButtons}
-					theme={{ roundness: 8 }}
+					theme={{ roundness: 2 }}
 				/>
 			</View>
 
