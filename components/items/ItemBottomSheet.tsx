@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import {
+	Keyboard,
 	KeyboardAvoidingView,
+	Modal,
 	Platform,
-	Pressable,
+	ScrollView,
 	StyleSheet,
+	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import {
 	Button,
 	Divider,
 	IconButton,
-	Portal,
 	Surface,
 	Text,
 	TextInput,
@@ -53,6 +55,9 @@ export function ItemBottomSheet({
 	const saveButtonIcon = isCreateMode ? "plus" : "content-save";
 	const canSave = name.trim().length > 0 && !loading;
 
+	// Safe area の bottom padding
+	const bottomPadding = Math.max(insets.bottom, spacing.md) + spacing.lg;
+
 	// itemが変更されたら初期値を設定
 	useEffect(() => {
 		if (!isCreateMode && item) {
@@ -71,58 +76,69 @@ export function ItemBottomSheet({
 
 	const handleSave = async () => {
 		if (!canSave) return;
+		Keyboard.dismiss();
 		await onSave(name.trim(), memo.trim());
 		resetForm();
 	};
 
 	const handleDelete = async () => {
 		if (!onDelete) return;
+		Keyboard.dismiss();
 		await onDelete();
 		resetForm();
 	};
 
-	if (!visible) return null;
+	const handleDismiss = () => {
+		Keyboard.dismiss();
+		onDismiss();
+	};
 
 	return (
-		<Portal>
-			{/* 背景オーバーレイ */}
-			<Pressable style={styles.overlay} onPress={onDismiss}>
-				<View style={styles.overlayBackground} />
-			</Pressable>
-
-			{/* ボトムシート本体 */}
+		<Modal
+			visible={visible}
+			transparent
+			animationType="slide"
+			statusBarTranslucent
+			onRequestClose={handleDismiss}
+		>
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
-				style={styles.keyboardAvoidingView}
-				pointerEvents="box-none"
+				style={styles.container}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
 			>
-				<View style={styles.bottomSheetWrapper} pointerEvents="box-none">
-					<Surface
-						style={[
-							styles.surface,
-							{ paddingBottom: insets.bottom + spacing.lg },
-						]}
-						elevation={5}
+				{/* 背景オーバーレイ - タップでキーボードを閉じる & モーダルを閉じる */}
+				<TouchableWithoutFeedback onPress={handleDismiss}>
+					<View style={styles.overlay} />
+				</TouchableWithoutFeedback>
+
+				{/* ボトムシート本体 */}
+				<Surface style={styles.surface} elevation={5}>
+					{/* ドラッグハンドル */}
+					<View style={styles.handle} />
+
+					{/* ヘッダー */}
+					<View style={styles.header}>
+						<Text variant="titleLarge" style={styles.title}>
+							{title}
+						</Text>
+						<IconButton
+							icon="close"
+							onPress={handleDismiss}
+							disabled={loading}
+							mode="contained-tonal"
+							size={20}
+						/>
+					</View>
+
+					<Divider />
+
+					{/* スクロール可能なコンテンツ */}
+					<ScrollView
+						keyboardShouldPersistTaps="handled"
+						showsVerticalScrollIndicator={false}
+						bounces={false}
+						contentContainerStyle={{ paddingBottom: bottomPadding }}
 					>
-						{/* ドラッグハンドル */}
-						<View style={styles.handle} />
-
-						{/* ヘッダー */}
-						<View style={styles.header}>
-							<Text variant="titleLarge" style={styles.title}>
-								{title}
-							</Text>
-							<IconButton
-								icon="close"
-								onPress={onDismiss}
-								disabled={loading}
-								mode="contained-tonal"
-								size={20}
-							/>
-						</View>
-
-						<Divider />
-
 						{/* フォーム */}
 						<View style={styles.content}>
 							<TextInput
@@ -134,6 +150,7 @@ export function ItemBottomSheet({
 								style={styles.input}
 								outlineStyle={styles.inputOutline}
 								left={<TextInput.Icon icon="cart-outline" />}
+								returnKeyType="next"
 							/>
 
 							<TextInput
@@ -179,35 +196,27 @@ export function ItemBottomSheet({
 								</Button>
 							)}
 						</View>
-					</Surface>
-				</View>
+					</ScrollView>
+				</Surface>
 			</KeyboardAvoidingView>
-		</Portal>
+		</Modal>
 	);
 }
 
 const styles = StyleSheet.create({
-	overlay: {
-		...StyleSheet.absoluteFillObject,
-		zIndex: 1,
-	},
-	overlayBackground: {
-		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-	},
-	keyboardAvoidingView: {
-		...StyleSheet.absoluteFillObject,
-		zIndex: 2,
-	},
-	bottomSheetWrapper: {
+	container: {
 		flex: 1,
 		justifyContent: "flex-end",
+	},
+	overlay: {
+		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
 	},
 	surface: {
 		backgroundColor: colors.surface,
 		borderTopLeftRadius: spacing.lg,
 		borderTopRightRadius: spacing.lg,
-		maxHeight: "80%",
+		maxHeight: "85%",
 	},
 	handle: {
 		width: 40,
@@ -242,7 +251,8 @@ const styles = StyleSheet.create({
 	},
 	buttons: {
 		paddingHorizontal: spacing.lg,
-		paddingTop: spacing.sm,
+		paddingTop: spacing.md,
+		paddingBottom: spacing.md,
 		gap: spacing.sm + spacing.xs,
 	},
 	button: {
