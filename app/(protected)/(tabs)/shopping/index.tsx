@@ -8,6 +8,7 @@ import { EmptyItemList } from "@/components/items/EmptyItemList";
 import { ItemBottomSheet } from "@/components/items/ItemBottomSheet";
 import { ItemCard } from "@/components/items/ItemCard";
 import { TEST_USER_NAMES } from "@/constants/dev";
+import { useUserGroups } from "@/features/group";
 import { useCreateItem } from "@/hooks/useCreateItem";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
 import { useItems } from "@/hooks/useItems";
@@ -17,9 +18,10 @@ import type { Item } from "@/types/items";
 
 export default function ShoppingScreen() {
 	const insets = useSafeAreaInsets();
-	const groupName = "佐藤家";
 
 	// Hooks
+	const { groups } = useUserGroups();
+	const groupName = groups.length > 0 ? groups[0].name : "グループ";
 	const { items, loading: itemsLoading, refetch } = useItems();
 	const { createItem, loading: createLoading } = useCreateItem();
 	const { updateItem, loading: updateLoading } = useUpdateItem();
