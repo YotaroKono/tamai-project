@@ -1,12 +1,12 @@
 import * as Clipboard from "expo-clipboard";
 import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import {
 	ActivityIndicator,
 	Avatar,
 	Button,
-	Card,
 	HelperText,
+	Surface,
 	Text,
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,7 +16,7 @@ import {
 	useGroupMembers,
 	useUserGroups,
 } from "@/features/group";
-import { colors, spacing } from "@/theme/paperTheme";
+import { colors, commonStyles, spacing } from "@/theme/paperTheme";
 
 export default function GroupScreen() {
 	const insets = useSafeAreaInsets();
@@ -49,7 +49,7 @@ export default function GroupScreen() {
 
 	if (isLoading) {
 		return (
-			<View style={[styles.container, { paddingTop: insets.top }]}>
+			<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
 				<View style={styles.loadingContainer}>
 					<ActivityIndicator size="large" color={colors.primary} />
 				</View>
@@ -58,17 +58,30 @@ export default function GroupScreen() {
 	}
 
 	return (
-		<View style={[styles.container, { paddingTop: insets.top }]}>
-			{/* グループヘッダー */}
-			<View style={styles.groupHeader}>
-				<View style={styles.groupIcon}>
-					<Text style={styles.groupIconText}>{groupName.charAt(0)}</Text>
+		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
+			{/* ヘッダー */}
+			<Surface style={commonStyles.header} elevation={0}>
+				<View style={commonStyles.headerContent}>
+					<Image
+						source={require("@/assets/icon.png")}
+						style={styles.headerIcon}
+						resizeMode="contain"
+					/>
+					<Text
+						variant="titleLarge"
+						style={{ fontWeight: "bold", color: colors.text }}
+					>
+						{groupName}
+					</Text>
 				</View>
-				<Text style={styles.groupName}>{groupName}</Text>
-			</View>
+			</Surface>
 
-			{/* メンバー一覧セクション */}
-			<Text style={styles.sectionTitle}>メンバー</Text>
+			{/* タイトル */}
+			<View style={styles.titleContainer}>
+				<Text variant="headlineSmall" style={styles.title}>
+					メンバー
+				</Text>
+			</View>
 
 			{error ? (
 				<View style={styles.errorContainer}>
@@ -82,12 +95,20 @@ export default function GroupScreen() {
 					data={members}
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
-						<Card style={styles.memberCard} mode="outlined">
-							<Card.Content style={styles.memberCardContent}>
-								<Avatar.Icon size={40} icon="account" style={styles.avatar} />
-								<Text style={styles.memberName}>{item.display_name}</Text>
-							</Card.Content>
-						</Card>
+						<Pressable>
+							<View style={styles.memberCard}>
+								<Avatar.Icon
+									size={40}
+									icon="account-circle"
+									style={styles.avatar}
+								/>
+								<View style={styles.memberContent}>
+									<Text variant="bodyLarge" style={styles.memberName}>
+										{item.display_name}
+									</Text>
+								</View>
+							</View>
+						</Pressable>
 					)}
 					contentContainerStyle={styles.listContent}
 					ListEmptyComponent={
@@ -126,66 +147,46 @@ export default function GroupScreen() {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: colors.background,
-		paddingHorizontal: spacing.md,
-	},
 	loadingContainer: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	groupHeader: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		gap: spacing.md,
-		marginTop: spacing.lg,
-		marginBottom: spacing.xl,
+	headerIcon: {
+		width: 40,
+		height: 40,
 	},
-	groupIcon: {
-		width: 48,
-		height: 48,
-		borderRadius: 12,
-		backgroundColor: colors.primary,
-		alignItems: "center",
-		justifyContent: "center",
+	titleContainer: {
+		paddingHorizontal: spacing.md,
+		paddingVertical: spacing.md,
 	},
-	groupIconText: {
-		fontSize: 24,
-		fontWeight: "bold",
-		color: colors.white,
-	},
-	groupName: {
-		fontSize: 24,
+	title: {
+		fontSize: 20,
 		fontWeight: "bold",
 		color: colors.text,
-	},
-	sectionTitle: {
-		fontSize: 16,
-		fontWeight: "600",
-		color: colors.text,
-		marginBottom: spacing.md,
 	},
 	listContent: {
+		paddingHorizontal: spacing.md,
 		paddingBottom: spacing.md,
 	},
 	memberCard: {
-		marginBottom: spacing.sm,
-		backgroundColor: colors.surface,
-	},
-	memberCardContent: {
 		flexDirection: "row",
 		alignItems: "center",
-		gap: spacing.md,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		backgroundColor: "#E6E5E5",
+		borderRadius: 8,
+		marginBottom: 8,
 	},
 	avatar: {
-		backgroundColor: "#E0E0E0",
+		backgroundColor: "transparent",
+	},
+	memberContent: {
+		flex: 1,
+		marginLeft: 8,
 	},
 	memberName: {
-		fontSize: 16,
-		color: colors.text,
+		fontWeight: "500",
 	},
 	emptyText: {
 		fontSize: 16,
@@ -205,6 +206,7 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	invitationSection: {
+		paddingHorizontal: spacing.md,
 		paddingVertical: spacing.md,
 	},
 	invitationTitle: {
