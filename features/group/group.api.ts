@@ -1,6 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
-import type { CreateGroupResult, Group, JoinGroupResult } from "./types";
+import type { Database, Tables } from "@/types/database";
+import type {
+	CreateGroupResult,
+	CreateInvitationResult,
+	Group,
+	GroupMemberWithUser,
+	JoinGroupResult,
+} from "./types";
 
 const generateInvitationToken = (): string => {
 	const chars =
@@ -91,6 +97,7 @@ export const createGroup = async (
 		.from("invitations")
 		.insert({
 			group_id: group.id,
+			token: invitationToken,
 			token_hash: tokenHash,
 			expires_at: expiresAt.toISOString(),
 		})
@@ -227,4 +234,125 @@ export const joinGroupByInvitation = async (
 	}
 
 	return { group };
+};
+
+/**
+ * グループメンバー一覧を取得する（Viewを使用してユーザー名も取得）
+ */
+export const getGroupMembers = async (
+	supabase: SupabaseClient<Database>,
+	groupId: string,
+): Promise<GroupMemberWithUser[]> => {
+	// group_members_with_users Viewからデータを取得
+	type GroupMemberView = Tables<"group_members_with_users">;
+	const { data: members, error: membersError } = await supabase
+		.from("group_members_with_users")
+		.select("*")
+		.eq("group_id", groupId)
+		.order("joined_at", { ascending: true })
+		.returns<GroupMemberView[]>();
+
+	if (membersError) {
+		throw new Error(
+			"メンバー情報の取得に失敗しました。時間をおいて、もう一度お試しください。",
+		);
+	}
+
+	// Viewから取得したデータをGroupMemberWithUser型にマッピング
+	// Viewのカラムはnull許容だが、実際のデータではnullにならない
+	const membersWithUser: GroupMemberWithUser[] = (members || [])
+		.filter(
+			(
+				member,
+			): member is typeof member & {
+				id: string;
+				user_id: string;
+				group_id: string;
+			} =>
+				member.id !== null &&
+				member.user_id !== null &&
+				member.group_id !== null,
+		)
+		.map((member) => ({
+			id: member.id,
+			user_id: member.user_id,
+			group_id: member.group_id,
+			joined_at: member.joined_at,
+			display_name: member.display_name || "名前未設定",
+		}));
+
+	return membersWithUser;
+};
+
+/**
+ * 招待リンクを生成する（新規作成または再生成）
+ * 有効期間が切れた場合は新しい招待リンクを生成する
+ */
+export const createInvitation = async (
+	supabase: SupabaseClient<Database>,
+	groupId: string,
+): Promise<CreateInvitationResult> => {
+	// 新しい招待トークンを生成
+	const invitationToken = generateInvitationToken();
+	const tokenHash = hashToken(invitationToken);
+	const expiresAt = new Date();
+	expiresAt.setHours(expiresAt.getHours() + 24);
+
+	const { data: invitation, error: invitationError } = await supabase
+		.from("invitations")
+		.insert({
+			group_id: groupId,
+			token: invitationToken,
+			token_hash: tokenHash,
+			expires_at: expiresAt.toISOString(),
+		})
+		.select()
+		.single();
+
+	if (invitationError || !invitation) {
+		throw new Error(
+			"招待リンクの生成に失敗しました。時間をおいて、もう一度お試しください。",
+		);
+	}
+
+	const invitationLink = generateInvitationLink(invitationToken);
+
+	return {
+		invitation,
+		invitationToken,
+		invitationLink,
+	};
+};
+
+/**
+ * 有効な招待リンクを取得する（なければ新規作成）
+ * 既存の有効な招待があればそれを返し、なければ新規作成する
+ */
+export const getOrCreateInvitation = async (
+	supabase: SupabaseClient<Database>,
+	groupId: string,
+): Promise<CreateInvitationResult> => {
+	// 1. 有効な招待を検索（期限切れでないもの）
+	const now = new Date().toISOString();
+	const { data: existingInvitation, error: fetchError } = await supabase
+		.from("invitations")
+		.select("*")
+		.eq("group_id", groupId)
+		.gt("expires_at", now)
+		.order("expires_at", { ascending: false })
+		.limit(1)
+		.single();
+
+	// 2. 有効な招待が存在し、トークンがある場合はそれを返す
+	if (!fetchError && existingInvitation && existingInvitation.token) {
+		const invitationLink = generateInvitationLink(existingInvitation.token);
+		return {
+			invitation: existingInvitation,
+			invitationToken: existingInvitation.token,
+			invitationLink,
+		};
+	}
+
+	// 3. 有効な招待がない場合は新規作成
+	return createInvitation(supabase, groupId);
 };

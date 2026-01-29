@@ -70,6 +70,7 @@ export type Database = {
 					expires_at: string;
 					group_id: string;
 					id: string;
+					token: string | null;
 					token_hash: string;
 				};
 				Insert: {
@@ -77,6 +78,7 @@ export type Database = {
 					expires_at: string;
 					group_id: string;
 					id?: string;
+					token?: string | null;
 					token_hash: string;
 				};
 				Update: {
@@ -84,6 +86,7 @@ export type Database = {
 					expires_at?: string;
 					group_id?: string;
 					id?: string;
+					token?: string | null;
 					token_hash?: string;
 				};
 				Relationships: [
@@ -168,7 +171,24 @@ export type Database = {
 			};
 		};
 		Views: {
-			[_ in never]: never;
+			group_members_with_users: {
+				Row: {
+					display_name: string | null;
+					group_id: string | null;
+					id: string | null;
+					joined_at: string | null;
+					user_id: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "group_members_group_id_fkey";
+						columns: ["group_id"];
+						isOneToOne: false;
+						referencedRelation: "groups";
+						referencedColumns: ["id"];
+					},
+				];
+			};
 		};
 		Functions: {
 			[_ in never]: never;

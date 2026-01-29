@@ -22,3 +22,20 @@ export type CreateGroupResult = {
 export type JoinGroupResult = {
 	group: Group;
 };
+
+// グループメンバー情報（ユーザー情報付き）
+export type GroupMemberWithUser = {
+	id: string;
+	user_id: string;
+	group_id: string;
+	joined_at: string | null;
+	// ユーザー情報（profilesテーブルがない場合はuser_idのみ）
+	display_name: string;
+};
+
+// 招待リンク作成結果
+export type CreateInvitationResult = {
+	invitation: Invitation;
+	invitationToken: string;
+	invitationLink: string;
+};
