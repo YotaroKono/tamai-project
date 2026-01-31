@@ -56,7 +56,7 @@ export default function GroupRegisterScreen() {
 
 		try {
 			await joinGroup(invitationLinkInput.trim());
-			router.replace("/(protected)/(tabs)");
+			router.replace("/(protected)/(tabs)/shopping");
 		} catch (err) {
 			const errorMessage =
 				err instanceof Error
