@@ -1,14 +1,17 @@
 import { Stack } from "expo-router";
+import { MembersProvider } from "@/providers/members-provider";
 
 export default function ProtectedLayout() {
 	return (
-		<Stack
-			screenOptions={{
-				headerShown: false,
-			}}
-		>
-			<Stack.Screen name="(tabs)" />
-			<Stack.Screen name="(group)" />
-		</Stack>
+		<MembersProvider>
+			<Stack
+				screenOptions={{
+					headerShown: false,
+				}}
+			>
+				<Stack.Screen name="(tabs)" />
+				<Stack.Screen name="(group)" />
+			</Stack>
+		</MembersProvider>
 	);
 }
