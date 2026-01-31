@@ -101,8 +101,8 @@ export type Database = {
 			};
 			items: {
 				Row: {
-					bought_by_user_id: string;
-					created_by_user_id: string;
+					bought_by_user_id: string | null;
+					created_by_user_id: string | null;
 					id: string;
 					is_purchased: boolean;
 					memo: string | null;
@@ -111,8 +111,8 @@ export type Database = {
 					updated_at: string | null;
 				};
 				Insert: {
-					bought_by_user_id: string;
-					created_by_user_id: string;
+					bought_by_user_id: string | null;
+					created_by_user_id: string | null;
 					id?: string;
 					is_purchased?: boolean;
 					memo?: string | null;
@@ -121,8 +121,8 @@ export type Database = {
 					updated_at?: string | null;
 				};
 				Update: {
-					bought_by_user_id?: string;
-					created_by_user_id?: string;
+					bought_by_user_id?: string | null;
+					created_by_user_id?: string | null;
 					id?: string;
 					is_purchased?: boolean;
 					memo?: string | null;
