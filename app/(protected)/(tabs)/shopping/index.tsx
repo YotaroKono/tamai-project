@@ -7,11 +7,11 @@ import { AppLogo } from "@/components/AppLogo";
 import { EmptyItemList } from "@/components/items/EmptyItemList";
 import { ItemBottomSheet } from "@/components/items/ItemBottomSheet";
 import { ItemCard } from "@/components/items/ItemCard";
-import { TEST_USER_NAMES } from "@/constants/dev";
 import { useUserGroups } from "@/features/group";
 import { useCreateItem } from "@/hooks/useCreateItem";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
 import { useItems } from "@/hooks/useItems";
+import { useMembers } from "@/hooks/useMembers";
 import { useUpdateItem } from "@/hooks/useUpdateItem";
 import { colors, commonStyles, spacing } from "@/theme/paperTheme";
 import type { Item } from "@/types/items";
@@ -26,6 +26,7 @@ export default function ShoppingScreen() {
 	const { createItem, loading: createLoading } = useCreateItem();
 	const { updateItem, loading: updateLoading } = useUpdateItem();
 	const { deleteItem, loading: deleteLoading } = useDeleteItem();
+	const { getMemberName } = useMembers();
 
 	// タブ状態
 	const [activeTab, setActiveTab] = useState<"unpurchased" | "purchased">(
@@ -89,11 +90,6 @@ export default function ShoppingScreen() {
 		}
 	};
 
-	// ユーザー名取得
-	const getUserName = (userId: string) => {
-		return TEST_USER_NAMES[userId] || "不明";
-	};
-
 	return (
 		<View style={[commonStyles.screenContainer, { paddingTop: insets.top }]}>
 			{/* ヘッダー */}
@@ -142,7 +138,7 @@ export default function ShoppingScreen() {
 					renderItem={({ item }) => (
 						<ItemCard
 							item={item}
-							userName={getUserName(item.created_by_user_id)}
+							userName={getMemberName(item.created_by_user_id)}
 							onPress={() => handleItemPress(item)}
 							onCheckboxPress={() => handleCheckboxPress(item)}
 							disabled={updateLoading}
