@@ -5,6 +5,7 @@ export type MembersContextType = {
 	members: GroupMemberWithUser[];
 	isLoading: boolean;
 	getMemberName: (userId: string | null) => string;
+	error: string | null;
 	refetch: () => Promise<void>;
 };
 

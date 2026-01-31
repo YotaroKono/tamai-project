@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Checkbox, Text } from "react-native-paper";
+import { colors } from "@/theme/paperTheme";
 import type { Item } from "@/types/items";
 
 interface ItemCardProps {
@@ -25,11 +26,14 @@ export function ItemCard({
 		<Pressable onPress={onPress} disabled={disabled}>
 			<View style={styles.container}>
 				{/* チェックボックス */}
-				<Checkbox
-					status={item.is_purchased ? "checked" : "unchecked"}
-					onPress={onCheckboxPress}
-					disabled={disabled}
-				/>
+				<View style={styles.checkboxContainer}>
+					<Checkbox
+						status={item.is_purchased ? "checked" : "unchecked"}
+						onPress={onCheckboxPress}
+						disabled={disabled}
+						uncheckedColor="#BDBDBD"
+					/>
+				</View>
 
 				{/* アイテム情報 */}
 				<View style={styles.content}>
@@ -64,9 +68,17 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: "#E6E5E5",
+		backgroundColor: colors.white,
 		borderRadius: 8,
+		borderWidth: 1,
+		borderColor: "#E3E3E3",
 		marginBottom: 8,
+	},
+	checkboxContainer: {
+		borderWidth: 1,
+		borderColor: "#E3E3E3",
+		borderRadius: 20,
+		marginRight: 4,
 	},
 	content: {
 		flex: 1,

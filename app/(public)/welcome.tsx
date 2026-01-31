@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,12 +33,12 @@ export default function Page() {
 				<Text style={styles.sectionTitle}>会員登録</Text>
 
 				<Pressable style={styles.googleButton} onPress={handleGoogleSignIn}>
-					<Text style={styles.googleButtonText}>Google</Text>
+					<Text style={styles.googleButtonText}>Googleで登録する</Text>
 				</Pressable>
 
 				<View style={styles.loginLinkContainer}>
 					<Text style={styles.loginText}>ログインは</Text>
-					<Pressable onPress={() => router.push("/sign-in")}>
+					<Pressable onPress={handleGoogleSignIn}>
 						<Text style={styles.loginLink}>こちら</Text>
 					</Pressable>
 					<Text style={styles.loginText}>から</Text>
