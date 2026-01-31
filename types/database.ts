@@ -111,8 +111,8 @@ export type Database = {
 					updated_at: string | null;
 				};
 				Insert: {
-					bought_by_user_id: string | null;
-					created_by_user_id: string | null;
+					bought_by_user_id?: string | null;
+					created_by_user_id?: string | null;
 					id?: string;
 					is_purchased?: boolean;
 					memo?: string | null;
