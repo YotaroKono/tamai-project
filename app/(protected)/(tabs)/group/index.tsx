@@ -16,23 +16,51 @@ import {
 	Text,
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import {
-	useCreateInvitation,
-	useGroupMembers,
-	useUserGroups,
-} from "@/features/group";
+import { UserProfileBottomSheet } from "@/components/user/UserProfileBottomSheet";
+import { DEV_SKIP_AUTH, DEV_USER_ID } from "@/config/dev";
+import { useCreateInvitation, useUserGroups } from "@/features/group";
+import { useMembers } from "@/hooks/useMembers";
+import { useSupabase } from "@/hooks/useSupabase";
 import { colors, commonStyles, spacing } from "@/theme/paperTheme";
 
 export default function GroupScreen() {
 	const insets = useSafeAreaInsets();
+	const { session, signOut } = useSupabase();
 	const { groups } = useUserGroups();
-	const { members, isLoading, error, refetch } = useGroupMembers();
+	const { members, isLoading, error, refetch } = useMembers();
 	const { createInvitationAsync, isLoading: isGettingInvitation } =
 		useCreateInvitation();
 	const [invitationError, setInvitationError] = useState<string | null>(null);
+	const [isProfileSheetVisible, setIsProfileSheetVisible] = useState(false);
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const groupName = groups.length > 0 ? groups[0].name : "グループ";
+
+	// 現在のユーザーIDを取得
+	const currentUserId =
+		session?.user?.id ?? (DEV_SKIP_AUTH ? DEV_USER_ID : null);
+
+	// 自分自身と他のメンバーを分離
+	const currentUser = members.find((m) => m.user_id === currentUserId);
+	const otherMembers = members.filter((m) => m.user_id !== currentUserId);
+
+	const handleOpenProfileSheet = () => {
+		setIsProfileSheetVisible(true);
+	};
+
+	const handleCloseProfileSheet = () => {
+		setIsProfileSheetVisible(false);
+	};
+
+	const handleLogout = async () => {
+		setIsLoggingOut(true);
+		try {
+			await signOut();
+		} finally {
+			setIsLoggingOut(false);
+			setIsProfileSheetVisible(false);
+		}
+	};
 
 	const handleShareInvitationLink = async () => {
 		setInvitationError(null);
@@ -79,13 +107,6 @@ export default function GroupScreen() {
 				</View>
 			</Surface>
 
-			{/* タイトル */}
-			<View style={styles.titleContainer}>
-				<Text variant="headlineSmall" style={styles.title}>
-					メンバー
-				</Text>
-			</View>
-
 			{error ? (
 				<View style={styles.errorContainer}>
 					<Text style={styles.errorText}>{error}</Text>
@@ -95,7 +116,7 @@ export default function GroupScreen() {
 				</View>
 			) : (
 				<FlatList
-					data={members}
+					data={otherMembers}
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
 						<Pressable>
@@ -114,8 +135,43 @@ export default function GroupScreen() {
 						</Pressable>
 					)}
 					contentContainerStyle={styles.listContent}
+					ListHeaderComponent={
+						<>
+							{/* あなたセクション */}
+							{currentUser && (
+								<>
+									<Text variant="titleMedium" style={styles.sectionTitle}>
+										あなた
+									</Text>
+									<Pressable onPress={handleOpenProfileSheet}>
+										<View style={styles.memberCard}>
+											<Avatar.Icon
+												size={40}
+												icon="account-circle"
+												style={styles.avatar}
+											/>
+											<View style={styles.memberContent}>
+												<Text variant="bodyLarge" style={styles.memberName}>
+													{currentUser.display_name}
+												</Text>
+											</View>
+										</View>
+									</Pressable>
+								</>
+							)}
+
+							{/* メンバーセクション */}
+							{otherMembers.length > 0 && (
+								<Text variant="titleMedium" style={styles.sectionTitle}>
+									メンバー
+								</Text>
+							)}
+						</>
+					}
 					ListEmptyComponent={
-						<Text style={styles.emptyText}>メンバーがいません</Text>
+						!currentUser ? (
+							<Text style={styles.emptyText}>メンバーがいません</Text>
+						) : null
 					}
 				/>
 			)}
@@ -140,6 +196,15 @@ export default function GroupScreen() {
 					{invitationError}
 				</HelperText>
 			</View>
+
+			{/* ユーザープロフィールボトムシート */}
+			<UserProfileBottomSheet
+				visible={isProfileSheetVisible}
+				displayName={currentUser?.display_name ?? ""}
+				onDismiss={handleCloseProfileSheet}
+				onLogout={handleLogout}
+				loading={isLoggingOut}
+			/>
 		</View>
 	);
 }
@@ -154,26 +219,25 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 40,
 	},
-	titleContainer: {
-		paddingHorizontal: spacing.md,
-		paddingVertical: spacing.md,
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: "bold",
-		color: colors.text,
-	},
 	listContent: {
 		paddingHorizontal: spacing.md,
 		paddingBottom: spacing.md,
+	},
+	sectionTitle: {
+		fontWeight: "600",
+		color: colors.text,
+		marginBottom: spacing.sm,
+		marginTop: spacing.sm,
 	},
 	memberCard: {
 		flexDirection: "row",
 		alignItems: "center",
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: "#E6E5E5",
+		backgroundColor: colors.white,
 		borderRadius: 8,
+		borderWidth: 1,
+		borderColor: "#E3E3E3",
 		marginBottom: 8,
 	},
 	avatar: {
