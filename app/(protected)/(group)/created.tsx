@@ -20,7 +20,7 @@ export default function GroupCreatedScreen() {
 	};
 
 	const handleNavigateToSpace = () => {
-		router.replace("/(protected)/(tabs)");
+		router.replace("/(protected)/(tabs)/shopping");
 	};
 
 	return (

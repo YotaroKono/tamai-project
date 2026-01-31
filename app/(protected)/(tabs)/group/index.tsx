@@ -1,6 +1,12 @@
-import * as Clipboard from "expo-clipboard";
 import { useState } from "react";
-import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import {
+	FlatList,
+	Image,
+	Pressable,
+	Share,
+	StyleSheet,
+	View,
+} from "react-native";
 import {
 	ActivityIndicator,
 	Avatar,
@@ -28,7 +34,6 @@ export default function GroupScreen() {
 	const { createInvitationAsync, isLoading: isGettingInvitation } =
 		useCreateInvitation();
 	const [invitationError, setInvitationError] = useState<string | null>(null);
-	const [copySuccess, setCopySuccess] = useState(false);
 	const [isProfileSheetVisible, setIsProfileSheetVisible] = useState(false);
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -60,20 +65,18 @@ export default function GroupScreen() {
 		}
 	};
 
-	const handleCopyInvitationLink = async () => {
+	const handleShareInvitationLink = async () => {
 		setInvitationError(null);
-		setCopySuccess(false);
 		try {
 			const result = await createInvitationAsync();
-			await Clipboard.setStringAsync(result.invitationLink);
-			setCopySuccess(true);
-			// 3秒後に成功メッセージを消す
-			setTimeout(() => setCopySuccess(false), 3000);
+			await Share.share({
+				message: `${groupName}に参加しませんか？\n${result.invitationLink}`,
+			});
 		} catch (err) {
 			const errorMessage =
 				err instanceof Error
 					? err.message
-					: "招待リンクの取得に失敗しました。時間をおいて、もう一度お試しください。";
+					: "招待リンクの共有に失敗しました。時間をおいて、もう一度お試しください。";
 			setInvitationError(errorMessage);
 		}
 	};
@@ -180,23 +183,18 @@ export default function GroupScreen() {
 			<View style={styles.invitationSection}>
 				<Text style={styles.invitationTitle}>招待リンク</Text>
 				<Text style={styles.invitationDescription}>
-					リンクの有効期限は24時間です。下記ボタンをクリックすると有効なリンクがコピーされます。
+					リンクの有効期限は24時間です。下記ボタンから招待リンクを共有できます。
 				</Text>
 				<Button
 					mode="contained"
-					onPress={handleCopyInvitationLink}
+					onPress={handleShareInvitationLink}
 					loading={isGettingInvitation}
 					disabled={isGettingInvitation}
-					style={styles.copyButton}
+					style={styles.shareButton}
 					contentStyle={styles.buttonContent}
 				>
-					リンクをコピーする
+					リンクを共有する
 				</Button>
-				{copySuccess && (
-					<HelperText type="info" visible={copySuccess}>
-						リンクをコピーしました
-					</HelperText>
-				)}
 				<HelperText type="error" visible={!!invitationError}>
 					{invitationError}
 				</HelperText>
@@ -288,7 +286,7 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		marginBottom: spacing.md,
 	},
-	copyButton: {
+	shareButton: {
 		borderRadius: 8,
 	},
 	buttonContent: {
