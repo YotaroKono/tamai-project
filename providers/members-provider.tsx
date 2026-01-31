@@ -1,21 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import { DEV_SKIP_AUTH, DEV_USER_ID } from "@/config/dev";
+import { MembersContext } from "@/context/members-context";
+import { getGroupMembers, getUserGroups } from "@/features/group/group.api";
+import type { GroupMemberWithUser } from "@/features/group/types";
 import { useSupabase } from "@/hooks/useSupabase";
-import { getGroupMembers, getUserGroups } from "../group.api";
-import type { GroupMemberWithUser } from "../types";
 
-type UseGroupMembersResult = {
-	members: GroupMemberWithUser[];
-	isLoading: boolean;
-	error: string | null;
-	refetch: () => Promise<void>;
+type MembersProviderProps = {
+	children: ReactNode;
 };
 
-export const useGroupMembers = (): UseGroupMembersResult => {
+export const MembersProvider = ({ children }: MembersProviderProps) => {
 	const { supabase, session, isLoaded } = useSupabase();
 	const [members, setMembers] = useState<GroupMemberWithUser[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const [groupId, setGroupId] = useState<string | null>(null);
 
 	const fetchMembers = useCallback(async () => {
@@ -28,10 +31,8 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 		}
 
 		setIsLoading(true);
-		setError(null);
 
 		try {
-			// まずユーザーのグループを取得
 			const userGroups = await getUserGroups(supabase, userId);
 			if (userGroups.length === 0) {
 				setMembers([]);
@@ -39,17 +40,12 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 				return;
 			}
 
-			// グループのメンバーを取得
 			const currentGroupId = userGroups[0].id;
 			setGroupId(currentGroupId);
 			const groupMembers = await getGroupMembers(supabase, currentGroupId);
 			setMembers(groupMembers);
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error
-					? err.message
-					: "メンバー情報の取得に失敗しました。時間をおいて、もう一度お試しください。";
-			setError(errorMessage);
+			console.error("Failed to fetch members:", err);
 		} finally {
 			setIsLoading(false);
 		}
@@ -66,7 +62,7 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 		if (!groupId) return;
 
 		const channel = supabase
-			.channel(`group_members:group_id=eq.${groupId}`)
+			.channel(`members_provider:group_id=eq.${groupId}`)
 			.on(
 				"postgres_changes",
 				{
@@ -76,7 +72,6 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 					filter: `group_id=eq.${groupId}`,
 				},
 				() => {
-					// メンバーが変更されたら再取得
 					fetchMembers();
 				},
 			)
@@ -87,10 +82,25 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 		};
 	}, [groupId, supabase, fetchMembers]);
 
-	return {
-		members,
-		isLoading,
-		error,
-		refetch: fetchMembers,
-	};
+	const getMemberName = useCallback(
+		(userId: string): string => {
+			const member = members.find((m) => m.user_id === userId);
+			return member?.display_name || "不明";
+		},
+		[members],
+	);
+
+	const value = useMemo(
+		() => ({
+			members,
+			isLoading,
+			getMemberName,
+			refetch: fetchMembers,
+		}),
+		[members, isLoading, getMemberName, fetchMembers],
+	);
+
+	return (
+		<MembersContext.Provider value={value}>{children}</MembersContext.Provider>
+	);
 };
