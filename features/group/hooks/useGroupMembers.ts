@@ -16,6 +16,7 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 	const [members, setMembers] = useState<GroupMemberWithUser[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [groupId, setGroupId] = useState<string | null>(null);
 
 	const fetchMembers = useCallback(async () => {
 		const userId = session?.user?.id ?? (DEV_SKIP_AUTH ? DEV_USER_ID : null);
@@ -34,12 +35,14 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 			const userGroups = await getUserGroups(supabase, userId);
 			if (userGroups.length === 0) {
 				setMembers([]);
+				setGroupId(null);
 				return;
 			}
 
 			// グループのメンバーを取得
-			const groupId = userGroups[0].id;
-			const groupMembers = await getGroupMembers(supabase, groupId);
+			const currentGroupId = userGroups[0].id;
+			setGroupId(currentGroupId);
+			const groupMembers = await getGroupMembers(supabase, currentGroupId);
 			setMembers(groupMembers);
 		} catch (err) {
 			const errorMessage =
@@ -57,6 +60,32 @@ export const useGroupMembers = (): UseGroupMembersResult => {
 			fetchMembers();
 		}
 	}, [isLoaded, fetchMembers]);
+
+	// リアルタイム購読
+	useEffect(() => {
+		if (!groupId) return;
+
+		const channel = supabase
+			.channel(`group_members:group_id=eq.${groupId}`)
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					schema: "public",
+					table: "group_members",
+					filter: `group_id=eq.${groupId}`,
+				},
+				() => {
+					// メンバーが変更されたら再取得
+					fetchMembers();
+				},
+			)
+			.subscribe();
+
+		return () => {
+			supabase.removeChannel(channel);
+		};
+	}, [groupId, supabase, fetchMembers]);
 
 	return {
 		members,
