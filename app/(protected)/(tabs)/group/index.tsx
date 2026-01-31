@@ -18,11 +18,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UserProfileBottomSheet } from "@/components/user/UserProfileBottomSheet";
 import { DEV_SKIP_AUTH, DEV_USER_ID } from "@/config/dev";
-import {
-	useCreateInvitation,
-	useGroupMembers,
-	useUserGroups,
-} from "@/features/group";
+import { useCreateInvitation, useUserGroups } from "@/features/group";
+import { useMembers } from "@/hooks/useMembers";
 import { useSupabase } from "@/hooks/useSupabase";
 import { colors, commonStyles, spacing } from "@/theme/paperTheme";
 
@@ -30,7 +27,7 @@ export default function GroupScreen() {
 	const insets = useSafeAreaInsets();
 	const { session, signOut } = useSupabase();
 	const { groups } = useUserGroups();
-	const { members, isLoading, error, refetch } = useGroupMembers();
+	const { members, isLoading, error, refetch } = useMembers();
 	const { createInvitationAsync, isLoading: isGettingInvitation } =
 		useCreateInvitation();
 	const [invitationError, setInvitationError] = useState<string | null>(null);
