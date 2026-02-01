@@ -48,6 +48,9 @@ function RootNavigator() {
 					animationDuration: 0,
 				}}
 			>
+				{/* 招待リンク処理（認証状態に関係なくアクセス可能） */}
+				<Stack.Screen name="invite/[token]" />
+
 				<Stack.Protected guard={isAuthenticated}>
 					<Stack.Screen name="(protected)" />
 				</Stack.Protected>
