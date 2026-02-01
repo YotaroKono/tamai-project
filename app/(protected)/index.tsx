@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { Text } from "react-native-paper";
 
+import { buildInvitationLink } from "@/config/invitation";
 import { useJoinGroup, useUserGroups } from "@/features/group";
 import { useSupabase } from "@/hooks/useSupabase";
 import { colors } from "@/theme/paperTheme";
@@ -28,7 +29,7 @@ export default function ProtectedIndex() {
 				const pendingToken = await getPendingInviteToken();
 
 				if (pendingToken) {
-					const invitationLink = `sato://invite/${pendingToken}`;
+					const invitationLink = buildInvitationLink(pendingToken);
 					await joinGroup(invitationLink);
 					await clearPendingInviteToken();
 					await refetch();

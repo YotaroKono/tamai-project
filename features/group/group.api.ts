@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { buildInvitationLink, extractTokenFromLink } from "@/config/invitation";
 import type { Database, Tables } from "@/types/database";
 import type {
 	CreateGroupResult,
@@ -153,23 +154,8 @@ export const getUserGroups = async (
 	return groups || [];
 };
 
-export const generateInvitationLink = (token: string): string => {
-	// TODO: Replace with actual app scheme or domain
-	return `sato://invite/${token}`;
-};
-
-/**
- * 招待リンクからトークンを抽出する
- * 入力形式: "sato://invite/{token}" または "{token}"
- */
-export const extractTokenFromLink = (input: string): string => {
-	const trimmed = input.trim();
-	const prefix = "sato://invite/";
-	if (trimmed.startsWith(prefix)) {
-		return trimmed.slice(prefix.length);
-	}
-	return trimmed;
-};
+// buildInvitationLink と extractTokenFromLink は @/config/invitation からインポート
+export { buildInvitationLink, extractTokenFromLink };
 
 /**
  * 招待トークンを使ってグループに参加する
@@ -315,7 +301,7 @@ export const createInvitation = async (
 		);
 	}
 
-	const invitationLink = generateInvitationLink(invitationToken);
+	const invitationLink = buildInvitationLink(invitationToken);
 
 	return {
 		invitation,
@@ -345,7 +331,7 @@ export const getOrCreateInvitation = async (
 
 	// 2. 有効な招待が存在し、トークンがある場合はそれを返す
 	if (!fetchError && existingInvitation && existingInvitation.token) {
-		const invitationLink = generateInvitationLink(existingInvitation.token);
+		const invitationLink = buildInvitationLink(existingInvitation.token);
 		return {
 			invitation: existingInvitation,
 			invitationToken: existingInvitation.token,

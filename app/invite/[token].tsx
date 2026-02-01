@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { ActivityIndicator, Button, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { buildInvitationLink } from "@/config/invitation";
 import { useJoinGroup } from "@/features/group";
 import { useSupabase } from "@/hooks/useSupabase";
 import { colors, commonStyles } from "@/theme/paperTheme";
@@ -40,7 +41,7 @@ export default function InviteScreen() {
 
 			// ログイン済みの場合は直接グループに参加
 			try {
-				const invitationLink = `sato://invite/${token}`;
+				const invitationLink = buildInvitationLink(token);
 				await joinGroup(invitationLink);
 				router.replace("/(protected)/(tabs)/shopping");
 			} catch (err) {
