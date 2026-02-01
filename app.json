@@ -10,7 +10,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#FE7521"
     },
-    "scheme": "expo-supabase-starter",
+    "scheme": "sato",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "platforms": [
