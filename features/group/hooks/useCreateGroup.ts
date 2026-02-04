@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DEV_SKIP_AUTH, DEV_USER_ID } from "@/config/dev";
 import { useSupabase } from "@/hooks/useSupabase";
-import { createGroup, generateInvitationLink } from "../group.api";
+import { buildInvitationLink, createGroup } from "../group.api";
 import type { CreateGroupResult } from "../types";
 
 type UseCreateGroupResult = {
@@ -31,7 +31,7 @@ export const useCreateGroup = (): UseCreateGroupResult => {
 		try {
 			const result = await createGroup(supabase, userId, groupName);
 
-			const invitationLink = generateInvitationLink(result.invitationToken);
+			const invitationLink = buildInvitationLink(result.invitationToken);
 
 			return { result, invitationLink };
 		} catch (err) {
