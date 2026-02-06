@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Modal,
 	StyleSheet,
 	TouchableWithoutFeedback,
@@ -21,7 +22,10 @@ interface UserProfileBottomSheetProps {
 	displayName: string;
 	onDismiss: () => void;
 	onLogout: () => Promise<void>;
+	onDeleteAccount: () => Promise<void>;
 	loading?: boolean;
+	isDeleting?: boolean;
+	deleteError?: string | null;
 }
 
 /**
@@ -32,7 +36,10 @@ export function UserProfileBottomSheet({
 	displayName,
 	onDismiss,
 	onLogout,
+	onDeleteAccount,
 	loading = false,
+	isDeleting = false,
+	deleteError = null,
 }: UserProfileBottomSheetProps) {
 	const theme = useTheme();
 	const insets = useSafeAreaInsets();
@@ -40,8 +47,54 @@ export function UserProfileBottomSheet({
 	// Safe area の bottom padding
 	const bottomPadding = Math.max(insets.bottom, spacing.md) + spacing.lg;
 
+	const isProcessing = loading || isDeleting;
+
 	const handleLogout = async () => {
+		console.log("[UserProfileBottomSheet] handleLogout called");
 		await onLogout();
+		console.log("[UserProfileBottomSheet] handleLogout completed");
+	};
+
+	const handleDeleteAccountPress = () => {
+		console.log(
+			"[UserProfileBottomSheet] handleDeleteAccountPress called - showing confirm alert",
+		);
+		Alert.alert(
+			"退会の確認",
+			"本当に退会しますか？\nこの操作は取り消すことができません。",
+			[
+				{
+					text: "キャンセル",
+					style: "cancel",
+					onPress: () => {
+						console.log(
+							"[UserProfileBottomSheet] User cancelled deletion via Alert",
+						);
+					},
+				},
+				{
+					text: "退会する",
+					style: "destructive",
+					onPress: async () => {
+						console.log(
+							"[UserProfileBottomSheet] User confirmed deletion via Alert",
+						);
+						console.log("[UserProfileBottomSheet] Calling onDeleteAccount...");
+						try {
+							await onDeleteAccount();
+							console.log(
+								"[UserProfileBottomSheet] onDeleteAccount completed successfully",
+							);
+						} catch (err) {
+							console.error(
+								"[UserProfileBottomSheet] onDeleteAccount failed:",
+								err,
+							);
+						}
+					},
+				},
+			],
+		);
 	};
 
 	return (
@@ -66,39 +119,21 @@ export function UserProfileBottomSheet({
 					{/* ヘッダー */}
 					<View style={styles.header}>
 						<Text variant="titleLarge" style={styles.title}>
-							プロフィール
+							ログアウト・退会
 						</Text>
-						<IconButton
-							icon="close"
-							onPress={onDismiss}
-							disabled={loading}
-							mode="contained-tonal"
-							size={20}
-						/>
 					</View>
 
 					<Divider />
 
 					{/* ユーザー情報 */}
 					<View style={[styles.content, { paddingBottom: bottomPadding }]}>
-						<View style={styles.userInfo}>
-							<Avatar.Icon
-								size={64}
-								icon="account-circle"
-								style={styles.avatar}
-							/>
-							<Text variant="titleMedium" style={styles.displayName}>
-								{displayName}
-							</Text>
-						</View>
-
-						{/* ログアウトボタン */}
+						{/* ボタン */}
 						<View style={styles.buttons}>
 							<Button
 								mode="outlined"
 								onPress={handleLogout}
 								loading={loading}
-								disabled={loading}
+								disabled={isProcessing}
 								textColor={theme.colors.error}
 								style={[styles.button, { borderColor: theme.colors.error }]}
 								contentStyle={styles.buttonContent}
@@ -106,6 +141,21 @@ export function UserProfileBottomSheet({
 							>
 								ログアウト
 							</Button>
+							<Button
+								mode="text"
+								onPress={handleDeleteAccountPress}
+								loading={isDeleting}
+								disabled={isProcessing}
+								textColor={theme.colors.error}
+								style={styles.deleteButton}
+								contentStyle={styles.buttonContent}
+								icon="account-remove"
+							>
+								退会する
+							</Button>
+							{deleteError && (
+								<Text style={styles.errorText}>{deleteError}</Text>
+							)}
 						</View>
 					</View>
 				</Surface>
@@ -138,10 +188,9 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		justifyContent: "center",
 		alignItems: "center",
-		paddingLeft: spacing.lg,
-		paddingRight: spacing.sm,
+		paddingHorizontal: spacing.lg,
 		paddingVertical: spacing.sm,
 	},
 	title: {
@@ -173,5 +222,14 @@ const styles = StyleSheet.create({
 	},
 	buttonContent: {
 		paddingVertical: spacing.xs,
+	},
+	deleteButton: {
+		borderRadius: spacing.lg,
+	},
+	errorText: {
+		fontSize: 14,
+		color: "#FF0000",
+		textAlign: "center",
+		marginTop: spacing.xs,
 	},
 });
