@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as jose from "jsr:@panva/jose@6";
 
 const SUPABASE_JWT_ISSUER =
