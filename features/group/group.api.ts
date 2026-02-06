@@ -1,4 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import * as Crypto from "expo-crypto";
+import { buildInvitationLink, extractTokenFromLink } from "@/config/invitation";
 import type { Database, Tables } from "@/types/database";
 import type {
 	CreateGroupResult,
@@ -8,29 +10,21 @@ import type {
 	JoinGroupResult,
 } from "./types";
 
-const generateInvitationToken = (): string => {
-	const chars =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	let result = "";
-	for (let i = 0; i < 32; i++) {
-		result += chars.charAt(Math.floor(Math.random() * chars.length));
-	}
-	return result;
+const generateInvitationToken = async (): Promise<string> => {
+	// 暗号学的に安全な乱数を生成
+	const randomBytes = await Crypto.getRandomBytesAsync(24);
+	// Base64エンコードしてURL-safeな文字列に変換
+	const base64 = btoa(String.fromCharCode(...randomBytes));
+	// URL-safe Base64に変換（+を-に、/を_に、=を削除）
+	return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 };
 
-const hashToken = (token: string): string => {
-	// シンプルなハッシュ関数（React Native互換）
-	// 本番環境ではexpo-cryptoなどのライブラリを使用することを推奨
-	let hash = 5381;
-	for (let i = 0; i < token.length; i++) {
-		hash = (hash * 33) ^ token.charCodeAt(i);
-	}
-	// 64文字のハッシュ値を生成（より安全性を高めるため）
-	const hash1 = (hash >>> 0).toString(16).padStart(8, "0");
-	const hash2 = ((hash * 31) >>> 0).toString(16).padStart(8, "0");
-	const hash3 = ((hash * 37) >>> 0).toString(16).padStart(8, "0");
-	const hash4 = ((hash * 41) >>> 0).toString(16).padStart(8, "0");
-	return `${hash1}${hash2}${hash3}${hash4}`;
+const hashToken = async (token: string): Promise<string> => {
+	// SHA-256でハッシュ化
+	return await Crypto.digestStringAsync(
+		Crypto.CryptoDigestAlgorithm.SHA256,
+		token,
+	);
 };
 
 export const createGroup = async (
@@ -88,8 +82,8 @@ export const createGroup = async (
 	}
 
 	// 4. Create invitation with 24-hour expiry
-	const invitationToken = generateInvitationToken();
-	const tokenHash = hashToken(invitationToken);
+	const invitationToken = await generateInvitationToken();
+	const tokenHash = await hashToken(invitationToken);
 	const expiresAt = new Date();
 	expiresAt.setHours(expiresAt.getHours() + 24);
 
@@ -153,23 +147,8 @@ export const getUserGroups = async (
 	return groups || [];
 };
 
-export const generateInvitationLink = (token: string): string => {
-	// TODO: Replace with actual app scheme or domain
-	return `sato://invite/${token}`;
-};
-
-/**
- * 招待リンクからトークンを抽出する
- * 入力形式: "sato://invite/{token}" または "{token}"
- */
-export const extractTokenFromLink = (input: string): string => {
-	const trimmed = input.trim();
-	const prefix = "sato://invite/";
-	if (trimmed.startsWith(prefix)) {
-		return trimmed.slice(prefix.length);
-	}
-	return trimmed;
-};
+// buildInvitationLink と extractTokenFromLink は @/config/invitation からインポート
+export { buildInvitationLink, extractTokenFromLink };
 
 /**
  * 招待トークンを使ってグループに参加する
@@ -186,7 +165,7 @@ export const joinGroupByInvitation = async (
 	}
 
 	// 2. トークンをハッシュ化して招待を検索
-	const tokenHash = hashToken(invitationToken);
+	const tokenHash = await hashToken(invitationToken);
 	const { data: invitation, error: invitationError } = await supabase
 		.from("invitations")
 		.select("*")
@@ -293,8 +272,8 @@ export const createInvitation = async (
 	groupId: string,
 ): Promise<CreateInvitationResult> => {
 	// 新しい招待トークンを生成
-	const invitationToken = generateInvitationToken();
-	const tokenHash = hashToken(invitationToken);
+	const invitationToken = await generateInvitationToken();
+	const tokenHash = await hashToken(invitationToken);
 	const expiresAt = new Date();
 	expiresAt.setHours(expiresAt.getHours() + 24);
 
@@ -315,7 +294,7 @@ export const createInvitation = async (
 		);
 	}
 
-	const invitationLink = generateInvitationLink(invitationToken);
+	const invitationLink = buildInvitationLink(invitationToken);
 
 	return {
 		invitation,
@@ -345,7 +324,7 @@ export const getOrCreateInvitation = async (
 
 	// 2. 有効な招待が存在し、トークンがある場合はそれを返す
 	if (!fetchError && existingInvitation && existingInvitation.token) {
-		const invitationLink = generateInvitationLink(existingInvitation.token);
+		const invitationLink = buildInvitationLink(existingInvitation.token);
 		return {
 			invitation: existingInvitation,
 			invitationToken: existingInvitation.token,

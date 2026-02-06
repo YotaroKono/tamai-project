@@ -24,6 +24,9 @@ export const useGoogleSignIn = () => {
 			provider: "google",
 			options: {
 				redirectTo: redirectUrl,
+				queryParams: {
+					prompt: "select_account",
+				},
 			},
 		});
 
