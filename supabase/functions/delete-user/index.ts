@@ -1,7 +1,9 @@
+// @ts-nocheck
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { AuthMiddleware } from "../_shared/jwt/default.ts";
 
 console.log("🚀 delete-user function loaded");
+
 
 Deno.serve((req) =>
 	AuthMiddleware(req, async (req) => {
