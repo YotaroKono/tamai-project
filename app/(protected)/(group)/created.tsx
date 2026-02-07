@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { Share, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { commonStyles } from "@/theme/paperTheme";
@@ -52,21 +52,20 @@ export default function GroupCreatedScreen() {
 				</View>
 
 				{/* Invitation Link */}
-				<View style={commonStyles.section}>
-					<View style={commonStyles.row}>
-						<TextInput
-							style={commonStyles.inputFlex}
-							value={invitationLink}
-							editable={false}
-							mode="outlined"
-							dense
-							multiline={false}
+				<View style={commonStyles.row}>
+					<View style={commonStyles.inviteLinkBox}>
+						<Text
 							numberOfLines={1}
-						/>
-						<Button mode="contained" onPress={handleShare}>
-							共有
-						</Button>
+							ellipsizeMode="tail"
+							style={commonStyles.inviteLinkText}
+						>
+							{invitationLink}
+						</Text>
 					</View>
+
+					<Button mode="contained" onPress={handleShare}>
+						共有
+					</Button>
 				</View>
 
 				{/* Navigate Button */}
