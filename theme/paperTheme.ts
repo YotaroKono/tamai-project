@@ -159,6 +159,21 @@ export const commonStyles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.white,
 	},
+	// 招待リンクボックス
+	inviteLinkBox: {
+		flex: 1,
+		height: 48,
+		borderWidth: 1,
+		borderColor: colors.white,
+		borderRadius: 4,
+		justifyContent: "center",
+		paddingHorizontal: 12,
+		backgroundColor: colors.white,
+	},
+	inviteLinkText: {
+		fontSize: 14,
+		color: colors.text,
+	},
 	// アバター
 	avatarPlaceholder: {
 		width: 80,
