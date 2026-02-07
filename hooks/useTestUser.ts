@@ -20,10 +20,6 @@ export const useTestUser = () => {
 
 	// 開発モードかつ未ログインの場合はテストデータを使用
 	if (DEV_MODE && !session) {
-		console.log("🧪 Using test data:", {
-			userId: CURRENT_TEST_USER,
-			spaceId: CURRENT_TEST_SPACE,
-		});
 		return {
 			userId: CURRENT_TEST_USER,
 			groupId: CURRENT_TEST_GROUP,
@@ -34,11 +30,6 @@ export const useTestUser = () => {
 	}
 
 	// 本番環境または認証済みの場合は実際のユーザー情報を使用
-	console.log("🔐 Using real data:", {
-		userId: session?.user.id || null,
-		groupId,
-		spaceId: space?.id || null,
-	});
 	return {
 		userId: session?.user.id || null,
 		groupId: groupId,

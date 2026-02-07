@@ -69,24 +69,9 @@ export default function GroupScreen() {
 	};
 
 	const handleDeleteAccount = async () => {
-		console.log("[GroupScreen] handleDeleteAccount called");
-		console.log("[GroupScreen] Current state:", {
-			isDeleting,
-			deleteError,
-			currentUserId,
-		});
 		try {
-			console.log("[GroupScreen] Calling deleteAccount from hook...");
 			await deleteAccount();
-			console.log(
-				"[GroupScreen] deleteAccount succeeded - 退会成功、ログイン画面へ遷移予定",
-			);
-			// 退会成功後はsignOutがhook内で呼ばれるため、自動的にログイン画面へ遷移
-		} catch (err) {
-			console.error("[GroupScreen] deleteAccount failed:", {
-				error: err,
-				message: err instanceof Error ? err.message : "Unknown error",
-			});
+		} catch {
 			// エラーはuseDeleteAccount内で管理されるため、ここでは何もしない
 		}
 	};

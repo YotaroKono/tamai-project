@@ -50,15 +50,10 @@ export function UserProfileBottomSheet({
 	const isProcessing = loading || isDeleting;
 
 	const handleLogout = async () => {
-		console.log("[UserProfileBottomSheet] handleLogout called");
 		await onLogout();
-		console.log("[UserProfileBottomSheet] handleLogout completed");
 	};
 
 	const handleDeleteAccountPress = () => {
-		console.log(
-			"[UserProfileBottomSheet] handleDeleteAccountPress called - showing confirm alert",
-		);
 		Alert.alert(
 			"退会の確認",
 			"本当に退会しますか？\nこの操作は取り消すことができません。",
@@ -66,30 +61,15 @@ export function UserProfileBottomSheet({
 				{
 					text: "キャンセル",
 					style: "cancel",
-					onPress: () => {
-						console.log(
-							"[UserProfileBottomSheet] User cancelled deletion via Alert",
-						);
-					},
 				},
 				{
 					text: "退会する",
 					style: "destructive",
 					onPress: async () => {
-						console.log(
-							"[UserProfileBottomSheet] User confirmed deletion via Alert",
-						);
-						console.log("[UserProfileBottomSheet] Calling onDeleteAccount...");
 						try {
 							await onDeleteAccount();
-							console.log(
-								"[UserProfileBottomSheet] onDeleteAccount completed successfully",
-							);
-						} catch (err) {
-							console.error(
-								"[UserProfileBottomSheet] onDeleteAccount failed:",
-								err,
-							);
+						} catch {
+							// エラーは呼び出し元で管理
 						}
 					},
 				},
