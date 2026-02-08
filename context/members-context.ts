@@ -4,8 +4,8 @@ import type { GroupMemberWithUser } from "@/features/group/types";
 export type MembersContextType = {
 	members: GroupMemberWithUser[];
 	isLoading: boolean;
+	getMemberName: (userId: string | null) => string;
 	error: string | null;
-	getMemberName: (userId: string) => string;
 	refetch: () => Promise<void>;
 };
 

@@ -45,3 +45,8 @@ android/
 
 # mcp
 .mcp.json
+
+# Supabase
+supabase/.branches
+supabase/.temp
+supabase/temp/
