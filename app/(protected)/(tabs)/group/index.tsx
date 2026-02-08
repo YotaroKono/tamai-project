@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UserProfileBottomSheet } from "@/components/user/UserProfileBottomSheet";
 import { DEV_SKIP_AUTH, DEV_USER_ID } from "@/config/dev";
 import { useCreateInvitation, useUserGroups } from "@/features/group";
+import { useDeleteAccount } from "@/hooks/useDeleteAccount";
 import { useMembers } from "@/hooks/useMembers";
 import { useSupabase } from "@/hooks/useSupabase";
 import { colors, commonStyles, spacing } from "@/theme/paperTheme";
@@ -30,6 +31,11 @@ export default function GroupScreen() {
 	const { members, isLoading, error, refetch } = useMembers();
 	const { createInvitationAsync, isLoading: isGettingInvitation } =
 		useCreateInvitation();
+	const {
+		deleteAccount,
+		isLoading: isDeleting,
+		error: deleteError,
+	} = useDeleteAccount();
 	const [invitationError, setInvitationError] = useState<string | null>(null);
 	const [isProfileSheetVisible, setIsProfileSheetVisible] = useState(false);
 	const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -59,6 +65,14 @@ export default function GroupScreen() {
 		} finally {
 			setIsLoggingOut(false);
 			setIsProfileSheetVisible(false);
+		}
+	};
+
+	const handleDeleteAccount = async () => {
+		try {
+			await deleteAccount();
+		} catch {
+			// エラーはuseDeleteAccount内で管理されるため、ここでは何もしない
 		}
 	};
 
@@ -203,7 +217,10 @@ export default function GroupScreen() {
 				displayName={currentUser?.display_name ?? ""}
 				onDismiss={handleCloseProfileSheet}
 				onLogout={handleLogout}
+				onDeleteAccount={handleDeleteAccount}
 				loading={isLoggingOut}
+				isDeleting={isDeleting}
+				deleteError={deleteError}
 			/>
 		</View>
 	);

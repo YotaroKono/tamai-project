@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useMemo } from "react";
 import { AppState } from "react-native";
 
 import { SupabaseContext } from "@/context/supabase-context";
+import { fetchWithTimeout } from "@/utils/fetchWithTimeout";
 
 interface SupabaseProviderProps {
 	children: ReactNode;
@@ -24,6 +25,9 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
 					persistSession: true,
 					detectSessionInUrl: false,
 					lock: processLock,
+				},
+				global: {
+					fetch: fetchWithTimeout,
 				},
 			}),
 		[supabaseUrl, supabaseKey],

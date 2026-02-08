@@ -7,7 +7,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "lint": "expo lint . --fix"
+    "lint": "expo lint . --fix",
+    "db:types": "npx supabase gen types typescript --project-id hyjzlpljjdvgnrlfemgx > types/database.ts"
   },
   "dependencies": {
     "@biomejs/biome": "^2.3.12",
