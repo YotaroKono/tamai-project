@@ -12,7 +12,7 @@ type UseDeleteAccountResult = {
  * Supabase Edge Function を呼び出してユーザーを削除
  */
 export const useDeleteAccount = (): UseDeleteAccountResult => {
-	const { supabase, signOut } = useSupabase();
+	const { supabase, session, signOut } = useSupabase();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -21,10 +21,6 @@ export const useDeleteAccount = (): UseDeleteAccountResult => {
 		setError(null);
 
 		try {
-			const {
-				data: { session },
-			} = await supabase.auth.getSession();
-
 			if (!session) {
 				throw new Error("ログインしていません");
 			}
