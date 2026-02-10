@@ -87,7 +87,7 @@ export default function GroupRegisterScreen() {
 					<View style={commonStyles.avatarPlaceholder}>
 						<Text style={commonStyles.avatarIcon}>👤</Text>
 					</View>
-					<Text style={commonStyles.welcomeText}>ようこそ、佐藤さん</Text>
+					<Text style={commonStyles.welcomeText}>ようこそ</Text>
 					<Text style={commonStyles.descriptionText}>
 						ファミリースペースを作成するか、{"\n"}
 						既存のスペースに参加してください
