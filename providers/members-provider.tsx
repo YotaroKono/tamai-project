@@ -36,6 +36,7 @@ export const MembersProvider = ({ children }: MembersProviderProps) => {
 
 		try {
 			const userGroups = await getUserGroups(supabase, userId);
+
 			if (userGroups.length === 0) {
 				setMembers([]);
 				setGroupId(null);
@@ -59,10 +60,10 @@ export const MembersProvider = ({ children }: MembersProviderProps) => {
 	}, [supabase, session?.user?.id]);
 
 	useEffect(() => {
-		if (isLoaded) {
+		if (isLoaded && session?.user?.id) {
 			fetchMembers();
 		}
-	}, [isLoaded, fetchMembers]);
+	}, [isLoaded, session?.user?.id, fetchMembers]);
 
 	// リアルタイム購読
 	useEffect(() => {

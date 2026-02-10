@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCreateGroup, useJoinGroup } from "@/features/group";
+import { useMembers } from "@/hooks/useMembers";
 import { commonStyles } from "@/theme/paperTheme";
 
 export default function GroupRegisterScreen() {
@@ -21,6 +22,7 @@ export default function GroupRegisterScreen() {
 
 	const { createGroupAsync, isLoading: isCreating } = useCreateGroup();
 	const { joinGroup, isLoading: isJoining } = useJoinGroup();
+	const { refetch: refetchMembers } = useMembers();
 
 	const handleCreateGroup = async () => {
 		setError("");
@@ -33,6 +35,8 @@ export default function GroupRegisterScreen() {
 			const { result, invitationLink } = await createGroupAsync(
 				familyName.trim(),
 			);
+			// グループ作成後にメンバー情報を再取得
+			await refetchMembers();
 			router.push({
 				pathname: "./created",
 				params: {
@@ -56,6 +60,8 @@ export default function GroupRegisterScreen() {
 
 		try {
 			await joinGroup(invitationLinkInput.trim());
+			// グループ参加後にメンバー情報を再取得
+			await refetchMembers();
 			router.replace("/(protected)/(tabs)/shopping");
 		} catch (err) {
 			const errorMessage =
