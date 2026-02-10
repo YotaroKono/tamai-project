@@ -5,6 +5,7 @@ import { Text } from "react-native-paper";
 
 import { buildInvitationLink } from "@/config/invitation";
 import { useJoinGroup, useUserGroups } from "@/features/group";
+import { useMembers } from "@/hooks/useMembers";
 import { useSupabase } from "@/hooks/useSupabase";
 import { colors } from "@/theme/paperTheme";
 import {
@@ -14,8 +15,9 @@ import {
 
 export default function ProtectedIndex() {
 	const { isLoaded, session } = useSupabase();
-	const { hasGroup, isLoading, refetch } = useUserGroups();
+	const { hasGroup, isLoading, refetch: refetchUserGroups } = useUserGroups();
 	const { joinGroup } = useJoinGroup();
+	const { refetch: refetchMembers } = useMembers();
 	const [isProcessingInvite, setIsProcessingInvite] = useState(true);
 
 	useEffect(() => {
@@ -32,7 +34,9 @@ export default function ProtectedIndex() {
 					const invitationLink = buildInvitationLink(pendingToken);
 					await joinGroup(invitationLink);
 					await clearPendingInviteToken();
-					await refetch();
+					// グループとメンバー情報を再取得
+					await refetchUserGroups();
+					await refetchMembers();
 				}
 			} catch {
 				await clearPendingInviteToken();
@@ -42,7 +46,7 @@ export default function ProtectedIndex() {
 		};
 
 		processPendingInvite();
-	}, [isLoaded, session?.user, joinGroup, refetch]);
+	}, [isLoaded, session?.user, joinGroup, refetchUserGroups, refetchMembers]);
 
 	if (!isLoaded || isLoading || isProcessingInvite) {
 		return (
