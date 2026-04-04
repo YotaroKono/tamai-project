@@ -9,6 +9,7 @@ export default function ProtectedLayout() {
 					headerShown: false,
 				}}
 			>
+				<Stack.Screen name="index" />
 				<Stack.Screen name="(tabs)" />
 				<Stack.Screen name="(group)" />
 			</Stack>

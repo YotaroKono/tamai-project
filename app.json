@@ -19,7 +19,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tamai.sato"
+      "bundleIdentifier": "com.tamai.sato",
+      "associatedDomains": ["applinks:sato-one.vercel.app"]
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +28,21 @@
         "backgroundColor": "#FE7521"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.tamai.sato"
+      "package": "com.tamai.sato",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "sato-one.vercel.app",
+              "pathPrefix": "/invite"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       "expo-router",
