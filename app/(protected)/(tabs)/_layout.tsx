@@ -65,7 +65,7 @@ function TabBar({ navigation, state, descriptors, insets }: BottomTabBarProps) {
 				return label;
 			}}
 			style={{
-				backgroundColor: theme.colors.elevation.level2,
+				backgroundColor: "#FFFFFF",
 			}}
 		/>
 	);
