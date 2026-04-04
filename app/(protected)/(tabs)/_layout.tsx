@@ -33,6 +33,7 @@ function TabBar({ navigation, state, descriptors, insets }: BottomTabBarProps) {
 		<BottomNavigation.Bar
 			navigationState={filteredState}
 			safeAreaInsets={insets}
+			compact
 			onTabPress={({ route, preventDefault }) => {
 				const event = navigation.emit({
 					type: "tabPress",
@@ -52,7 +53,7 @@ function TabBar({ navigation, state, descriptors, insets }: BottomTabBarProps) {
 			renderIcon={({ route, focused, color }) => {
 				const { options } = descriptors[route.key];
 				if (options.tabBarIcon) {
-					return options.tabBarIcon({ focused, color, size: 24 });
+					return options.tabBarIcon({ focused, color, size: 20 });
 				}
 				return null;
 			}}
@@ -66,6 +67,8 @@ function TabBar({ navigation, state, descriptors, insets }: BottomTabBarProps) {
 			}}
 			style={{
 				backgroundColor: "#FFFFFF",
+				borderTopWidth: 1,
+				borderTopColor: "#E0E0E0",
 			}}
 		/>
 	);
@@ -102,7 +105,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ color, focused }) => (
 						<MaterialCommunityIcons
 							name={focused ? "cart" : "cart-outline"}
-							size={24}
+							size={20}
 							color={color}
 						/>
 					),
@@ -115,7 +118,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ color, focused }) => (
 						<MaterialCommunityIcons
 							name={focused ? "account-group" : "account-group-outline"}
-							size={24}
+							size={20}
 							color={color}
 						/>
 					),

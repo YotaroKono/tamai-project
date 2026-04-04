@@ -4,8 +4,8 @@ import { MD3LightTheme } from "react-native-paper";
 // アプリ全体で使う色
 export const colors = {
 	primary: "#EE7800",
-	background: "#FFF5F0",
-	surface: "#FEFEFE",
+	background: "#FFFFFF",
+	surface: "#FFFFFF",
 	text: "#555555",
 	white: "#FFFFFF",
 } as const;

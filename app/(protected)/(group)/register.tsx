@@ -74,19 +74,9 @@ export default function GroupRegisterScreen() {
 
 	return (
 		<SafeAreaView style={commonStyles.screenContainer}>
-			<View style={commonStyles.contentLarge}>
-				{/* Logo */}
-				<View style={commonStyles.logoContainer}>
-					<View style={commonStyles.logo}>
-						<Text style={commonStyles.logoText}>S</Text>
-					</View>
-				</View>
-
+			<View style={[commonStyles.contentLarge, { justifyContent: "center" }]}>
 				{/* Welcome Message */}
 				<View style={commonStyles.sectionCentered}>
-					<View style={commonStyles.avatarPlaceholder}>
-						<Text style={commonStyles.avatarIcon}>👤</Text>
-					</View>
 					<Text style={commonStyles.welcomeText}>ようこそ</Text>
 					<Text style={commonStyles.descriptionText}>
 						ファミリースペースを作成するか、{"\n"}
@@ -110,7 +100,7 @@ export default function GroupRegisterScreen() {
 				</View>
 
 				{/* Form Content */}
-				<View style={commonStyles.formContainer}>
+				<View>
 					{activeTab === "create" ? (
 						<>
 							<TextInput

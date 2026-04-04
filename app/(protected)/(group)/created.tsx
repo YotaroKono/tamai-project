@@ -25,14 +25,7 @@ export default function GroupCreatedScreen() {
 
 	return (
 		<SafeAreaView style={commonStyles.screenContainer}>
-			<View style={commonStyles.contentLarge}>
-				{/* Logo */}
-				<View style={commonStyles.logoContainer}>
-					<View style={commonStyles.logo}>
-						<Text style={commonStyles.logoText}>S</Text>
-					</View>
-				</View>
-
+			<View style={[commonStyles.contentLarge, { justifyContent: "center" }]}>
 				{/* Success Icon */}
 				<View style={commonStyles.sectionCentered}>
 					<View style={commonStyles.iconCircleLarge}>
@@ -69,7 +62,7 @@ export default function GroupCreatedScreen() {
 				</View>
 
 				{/* Navigate Button */}
-				<View style={commonStyles.bottomButtonContainer}>
+				<View style={{ marginTop: 40 }}>
 					<Button
 						mode="contained"
 						onPress={handleNavigateToSpace}
