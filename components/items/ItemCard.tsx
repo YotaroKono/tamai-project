@@ -1,5 +1,6 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Checkbox, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { colors } from "@/theme/paperTheme";
 import type { Item } from "@/types/items";
 
@@ -9,6 +10,8 @@ interface ItemCardProps {
 	onPress: () => void;
 	onCheckboxPress: () => void;
 	disabled?: boolean;
+	isFirst?: boolean;
+	isLast?: boolean;
 }
 
 /**
@@ -21,19 +24,31 @@ export function ItemCard({
 	onPress,
 	onCheckboxPress,
 	disabled = false,
+	isFirst = false,
+	isLast = false,
 }: ItemCardProps) {
 	return (
 		<Pressable onPress={onPress} disabled={disabled}>
-			<View style={styles.container}>
+			<View
+				style={[
+					styles.container,
+					isFirst && styles.firstItem,
+					isLast && styles.lastItem,
+				]}
+			>
 				{/* チェックボックス */}
-				<View style={styles.checkboxContainer}>
-					<Checkbox
-						status={item.is_purchased ? "checked" : "unchecked"}
-						onPress={onCheckboxPress}
-						disabled={disabled}
-						uncheckedColor="#BDBDBD"
-					/>
-				</View>
+				<Pressable
+					onPress={onCheckboxPress}
+					disabled={disabled}
+					style={[
+						styles.checkboxContainer,
+						item.is_purchased && styles.checkboxChecked,
+					]}
+				>
+					{item.is_purchased && (
+						<MaterialCommunityIcons name="check" size={16} color="#FFFFFF" />
+					)}
+				</Pressable>
 
 				{/* アイテム情報 */}
 				<View style={styles.content}>
@@ -58,6 +73,8 @@ export function ItemCard({
 					{userName}
 				</Text>
 			</View>
+			{/* セパレーター（最後のアイテム以外） */}
+			{!isLast && <View style={styles.separator} />}
 		</Pressable>
 	);
 }
@@ -66,24 +83,36 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
 		alignItems: "center",
-		paddingVertical: 12,
+		paddingVertical: 16,
 		paddingHorizontal: 16,
 		backgroundColor: colors.white,
-		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: "#C0C0C0",
-		marginBottom: 8,
+	},
+	firstItem: {
+		borderTopLeftRadius: 12,
+		borderTopRightRadius: 12,
+	},
+	lastItem: {
+		borderBottomLeftRadius: 12,
+		borderBottomRightRadius: 12,
+	},
+	separator: {
+		height: 1,
+		backgroundColor: "#E5E5E5",
+		marginLeft: 56,
 	},
 	checkboxContainer: {
-		width: 40,
-		height: 40,
+		width: 24,
+		height: 24,
 		borderWidth: 1,
 		borderColor: "#C0C0C0",
-		borderRadius: 20,
-		marginRight: 4,
+		borderRadius: 12,
+		marginRight: 8,
 		alignItems: "center",
 		justifyContent: "center",
-		overflow: "hidden",
+	},
+	checkboxChecked: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
 	},
 	content: {
 		flex: 1,
