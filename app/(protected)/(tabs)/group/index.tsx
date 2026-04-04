@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import {
 	ActivityIndicator,
-	Avatar,
 	Button,
 	HelperText,
 	Surface,
@@ -135,11 +134,6 @@ export default function GroupScreen() {
 					renderItem={({ item }) => (
 						<Pressable>
 							<View style={styles.memberCard}>
-								<Avatar.Icon
-									size={40}
-									icon="account-circle"
-									style={styles.avatar}
-								/>
 								<View style={styles.memberContent}>
 									<Text variant="bodyLarge" style={styles.memberName}>
 										{item.display_name}
@@ -251,9 +245,6 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#C0C0C0",
 		marginBottom: 8,
-	},
-	avatar: {
-		backgroundColor: "transparent",
 	},
 	memberContent: {
 		flex: 1,
