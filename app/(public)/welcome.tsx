@@ -1,18 +1,30 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useAppleSignIn } from "@/hooks/useAppleSignIn";
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn";
 
 import { styles } from "./welcome.styles";
 
 export default function Page() {
-	const { signInWithGoogle, isLoaded } = useGoogleSignIn();
+	const { signInWithGoogle, isLoaded: isGoogleLoaded } = useGoogleSignIn();
+	const { signInWithApple, isLoaded: isAppleLoaded } = useAppleSignIn();
 
 	const handleGoogleSignIn = async () => {
-		if (!isLoaded) return;
+		if (!isGoogleLoaded) return;
 
 		try {
 			await signInWithGoogle();
+		} catch (err) {
+			console.error(JSON.stringify(err, null, 2));
+		}
+	};
+
+	const handleAppleSignIn = async () => {
+		if (!isAppleLoaded) return;
+
+		try {
+			await signInWithApple();
 		} catch (err) {
 			console.error(JSON.stringify(err, null, 2));
 		}
@@ -31,6 +43,10 @@ export default function Page() {
 
 			<View style={styles.buttonContainer}>
 				<Text style={styles.sectionTitle}>会員登録</Text>
+
+				<Pressable style={styles.appleButton} onPress={handleAppleSignIn}>
+					<Text style={styles.appleButtonText}>Appleで登録する</Text>
+				</Pressable>
 
 				<Pressable style={styles.googleButton} onPress={handleGoogleSignIn}>
 					<Text style={styles.googleButtonText}>Googleで登録する</Text>
