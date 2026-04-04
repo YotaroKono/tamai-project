@@ -159,11 +159,6 @@ export default function GroupScreen() {
 									</Text>
 									<Pressable onPress={handleOpenProfileSheet}>
 										<View style={styles.memberCard}>
-											<Avatar.Icon
-												size={40}
-												icon="account-circle"
-												style={styles.avatar}
-											/>
 											<View style={styles.memberContent}>
 												<Text variant="bodyLarge" style={styles.memberName}>
 													{currentUser.display_name}
@@ -249,12 +244,12 @@ const styles = StyleSheet.create({
 	memberCard: {
 		flexDirection: "row",
 		alignItems: "center",
-		paddingVertical: 12,
+		paddingVertical: 20,
 		paddingHorizontal: 16,
 		backgroundColor: colors.white,
 		borderRadius: 8,
 		borderWidth: 1,
-		borderColor: "#E3E3E3",
+		borderColor: "#C0C0C0",
 		marginBottom: 8,
 	},
 	avatar: {
