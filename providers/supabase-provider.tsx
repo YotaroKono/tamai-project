@@ -1,6 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { Session } from "@supabase/supabase-js";
 import { createClient, processLock } from "@supabase/supabase-js";
-import { type ReactNode, useEffect, useMemo } from "react";
+import {
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import { AppState } from "react-native";
 
 import { SupabaseContext } from "@/context/supabase-context";
@@ -15,6 +22,9 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
 	const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 	// biome-ignore lint/style/noNonNullAssertion: environment variables are guaranteed by the platform
 	const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY!;
+
+	const [session, setSession] = useState<Session | null>(null);
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	const supabase = useMemo(
 		() =>
@@ -33,6 +43,28 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
 		[supabaseUrl, supabaseKey],
 	);
 
+	// セッション管理（1回だけ実行）
+	useEffect(() => {
+		// 初期セッション取得
+		supabase.auth.getSession().then(({ data }) => {
+			setSession(data.session);
+			setIsLoaded(true);
+		});
+
+		// 認証状態変化リスナー
+		const { data: listener } = supabase.auth.onAuthStateChange(
+			(_event, newSession) => {
+				setSession(newSession);
+				setIsLoaded(true);
+			},
+		);
+
+		return () => {
+			listener.subscription.unsubscribe();
+		};
+	}, [supabase]);
+
+	// AppState 監視（トークンリフレッシュ）
 	useEffect(() => {
 		const subscription = AppState.addEventListener("change", (state) => {
 			if (state === "active") {
@@ -46,8 +78,23 @@ export const SupabaseProvider = ({ children }: SupabaseProviderProps) => {
 		};
 	}, [supabase]);
 
+	const signOut = useCallback(async () => {
+		await supabase.auth.signOut();
+		setSession(null);
+	}, [supabase]);
+
+	const value = useMemo(
+		() => ({
+			supabase,
+			session,
+			isLoaded,
+			signOut,
+		}),
+		[supabase, session, isLoaded, signOut],
+	);
+
 	return (
-		<SupabaseContext.Provider value={supabase}>
+		<SupabaseContext.Provider value={value}>
 			{children}
 		</SupabaseContext.Provider>
 	);
