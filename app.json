@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-supabase-starter",
-    "slug": "expo-supabase-starter",
+    "name": "Sato",
+    "slug": "Sato",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tamai.sato",
-      "associatedDomains": ["applinks:sato-one.vercel.app"]
+      "associatedDomains": [
+        "applinks:sato-one.vercel.app"
+      ],
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +45,10 @@
               "pathPrefix": "/invite"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -59,6 +67,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a6c8563b-d183-4dfb-868e-5fb30eac068d"
+      }
     }
   }
 }
