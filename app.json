@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Sato",
-    "slug": "Sato",
+    "slug": "expo-supabase-starter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -73,6 +73,7 @@
       "eas": {
         "projectId": "a6c8563b-d183-4dfb-868e-5fb30eac068d"
       }
-    }
+    },
+    "owner": "tamaifutako"
   }
 }
