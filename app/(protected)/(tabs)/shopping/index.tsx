@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { FAB, SegmentedButtons, Surface, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -132,20 +132,25 @@ export default function ShoppingScreen() {
 			{filteredItems.length === 0 && !itemsLoading ? (
 				<EmptyItemList />
 			) : (
-				<FlatList
-					data={filteredItems}
-					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => (
-						<ItemCard
-							item={item}
-							userName={getMemberName(item.created_by_user_id)}
-							onPress={() => handleItemPress(item)}
-							onCheckboxPress={() => handleCheckboxPress(item)}
-							disabled={updateLoading}
-						/>
-					)}
+				<ScrollView
+					style={styles.listWrapper}
 					contentContainerStyle={styles.listContent}
-				/>
+				>
+					<View style={styles.listCard}>
+						{filteredItems.map((item, index) => (
+							<ItemCard
+								key={item.id}
+								item={item}
+								userName={getMemberName(item.created_by_user_id)}
+								onPress={() => handleItemPress(item)}
+								onCheckboxPress={() => handleCheckboxPress(item)}
+								disabled={updateLoading}
+								isFirst={index === 0}
+								isLast={index === filteredItems.length - 1}
+							/>
+						))}
+					</View>
+				</ScrollView>
 			)}
 
 			{/* 追加ボタン（FAB） */}
@@ -191,9 +196,17 @@ const styles = StyleSheet.create({
 	segmentedButtons: {
 		borderRadius: 16,
 	},
+	listWrapper: {
+		flex: 1,
+	},
 	listContent: {
 		paddingHorizontal: spacing.md,
-		paddingBottom: spacing.xl * 3 + spacing.md, // FAB用の余白
+		paddingBottom: spacing.xl * 3 + spacing.md,
+	},
+	listCard: {
+		borderRadius: 12,
+		backgroundColor: colors.white,
+		overflow: "hidden",
 	},
 	fab: {
 		position: "absolute",

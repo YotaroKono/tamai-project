@@ -10,6 +10,8 @@ interface ItemCardProps {
 	onPress: () => void;
 	onCheckboxPress: () => void;
 	disabled?: boolean;
+	isFirst?: boolean;
+	isLast?: boolean;
 }
 
 /**
@@ -22,10 +24,18 @@ export function ItemCard({
 	onPress,
 	onCheckboxPress,
 	disabled = false,
+	isFirst = false,
+	isLast = false,
 }: ItemCardProps) {
 	return (
 		<Pressable onPress={onPress} disabled={disabled}>
-			<View style={styles.container}>
+			<View
+				style={[
+					styles.container,
+					isFirst && styles.firstItem,
+					isLast && styles.lastItem,
+				]}
+			>
 				{/* チェックボックス */}
 				<Pressable
 					onPress={onCheckboxPress}
@@ -63,6 +73,8 @@ export function ItemCard({
 					{userName}
 				</Text>
 			</View>
+			{/* セパレーター（最後のアイテム以外） */}
+			{!isLast && <View style={styles.separator} />}
 		</Pressable>
 	);
 }
@@ -74,10 +86,19 @@ const styles = StyleSheet.create({
 		paddingVertical: 16,
 		paddingHorizontal: 16,
 		backgroundColor: colors.white,
-		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: "#C0C0C0",
-		marginBottom: 8,
+	},
+	firstItem: {
+		borderTopLeftRadius: 12,
+		borderTopRightRadius: 12,
+	},
+	lastItem: {
+		borderBottomLeftRadius: 12,
+		borderBottomRightRadius: 12,
+	},
+	separator: {
+		height: 1,
+		backgroundColor: "#E5E5E5",
+		marginLeft: 56,
 	},
 	checkboxContainer: {
 		width: 24,
