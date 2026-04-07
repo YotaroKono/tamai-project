@@ -53,6 +53,20 @@ export const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "500",
 	},
+	appleButton: {
+		backgroundColor: "#000000",
+		paddingVertical: 14,
+		paddingHorizontal: 48,
+		borderRadius: 8,
+		alignItems: "center",
+		justifyContent: "center",
+		minWidth: 280,
+	},
+	appleButtonText: {
+		color: "#FFFFFF",
+		fontSize: 16,
+		fontWeight: "500",
+	},
 	loginLinkContainer: {
 		flexDirection: "row",
 		alignItems: "center",
